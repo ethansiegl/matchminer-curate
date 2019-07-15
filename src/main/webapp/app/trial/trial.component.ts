@@ -129,13 +129,18 @@ export class TrialComponent implements OnInit, AfterViewInit {
                 nctId = tempTrial;
                 this.importTrialsFromNct(nctId, '');
             } else if ( tempTrial.match( /^\d+-\d+$/g ) ) {
-                this.connectionService.getTrialByProtocolNo( tempTrial ).subscribe( ( res ) => {
-                    protocolNo = res['msk_id'];
-                    nctId = res['tds_data']['nct_id'];
-                    this.importTrialsFromNct(nctId, protocolNo);
-                }, ( error ) => {
-                    this.messages.push( tempTrial + ' not found' );
-                });
+                //pull from MatchMiner
+                this.connectionService.getTrialFromMatchMiner(tempTrial).subscribe( (res) => {
+                    this.importTrialsFromMatchMiner(res['_items'][0])
+                })
+
+                // this.connectionService.getTrialByProtocolNo( tempTrial ).subscribe( ( res ) => {
+                //     protocolNo = res['msk_id'];
+                //     nctId = res['tds_data']['nct_id'];
+                //     this.importTrialsFromNct(nctId, protocolNo);
+                // }, ( error ) => {
+                //     this.messages.push( tempTrial + ' not found' );
+                // });
             } else {
                 this.messages.push( tempTrial + ' is invalid trial format' );
                 continue;
@@ -144,62 +149,90 @@ export class TrialComponent implements OnInit, AfterViewInit {
         this.trialsToImport = '';
     }
 
+    importTrialsFromMatchMiner(trial_res) {
+        let setChosenTrial = false;
+        const trial: Trial = trial_res;
+        this.db.object('Trials/' + trial['nct_id']).set(trial).then((response) => {
+            this.messages.push('Successfully imported ' + trial['nct_id']);
+            if (this.oncokb) {
+                const metaRecord: Meta = {
+                    protocol_no: trial['protocol_no'],
+                    nct_id: trial['nct_id'],
+                    title: trial['official_title'],
+                    status: trial['_status'],
+                    precision_medicine: 'YES',
+                    curated: 'YES'
+                };
+                this.metaService.createMetaRecord(metaRecord);
+            }
+            if (setChosenTrial === false) {
+                this.nctIdChosen = trial['nct_id'];
+                this.trialService.setTrialChosen(this.nctIdChosen);
+                this.originalTrial = _.clone(this.trialChosen);
+                setChosenTrial = true;
+            }
+        }).catch((error) => {
+            this.messages.push('Fail to save to database ' + trial['nct_id']);
+        });
+    }
+
     importTrialsFromNct(nctId: string, protocolNo: string) {
         let setChosenTrial = false;
-        this.connectionService.importTrials( nctId ).subscribe( ( res ) => {
+        this.connectionService.importTrials(nctId).subscribe((res) => {
             const trialInfo = res;
             const armsInfo: any = [];
-            _.forEach( trialInfo[ 'arms' ], function( arm ) {
-                if ( arm.arm_description !== null ) {
-                    armsInfo.push( {
+            _.forEach(trialInfo['arms'], function(arm) {
+                if (arm.arm_description !== null) {
+                    armsInfo.push({
                         arm_description: arm.arm_name,
                         arm_info: arm.arm_description,
                         match: []
-                    } );
+                    });
                 }
-            } );
+            });
             const trial: Trial = {
                 curation_status: 'In progress',
                 archived: 'No',
                 protocol_no: protocolNo,
-                nct_id: trialInfo[ 'nct_id' ],
-                long_title: trialInfo[ 'official_title' ],
-                short_title: trialInfo[ 'brief_title' ],
-                phase: trialInfo[ 'phase' ][ 'phase' ],
-                status: trialInfo[ 'current_trial_status' ],
+                nct_id: trialInfo['nct_id'],
+                long_title: trialInfo['official_title'],
+                short_title: trialInfo['brief_title'],
+                phase: trialInfo['phase']['phase'],
+                status: trialInfo['current_trial_status'],
                 treatment_list: {
-                    step: [ {
+                    step: [{
                         arm: armsInfo,
                         match: []
-                    } ]
+                    }]
                 }
             };
-            this.db.object( 'Trials/' + trialInfo[ 'nct_id' ] ).set( trial ).then( ( response ) => {
-                this.messages.push( 'Successfully imported ' + trialInfo[ 'nct_id' ] );
+            this.db.object('Trials/' + trialInfo['nct_id']).set(trial).then((response) => {
+                this.messages.push('Successfully imported ' + trialInfo['nct_id']);
                 if (this.oncokb) {
                     const metaRecord: Meta = {
                         protocol_no: protocolNo,
-                        nct_id: trialInfo[ 'nct_id' ],
-                        title: trialInfo[ 'official_title' ],
-                        status: trialInfo[ 'current_trial_status' ],
+                        nct_id: trialInfo['nct_id'],
+                        title: trialInfo['official_title'],
+                        status: trialInfo['current_trial_status'],
                         precision_medicine: 'YES',
                         curated: 'YES'
                     };
                     this.metaService.createMetaRecord(metaRecord);
                 }
-                if ( setChosenTrial === false ) {
-                    this.nctIdChosen = trialInfo[ 'nct_id' ];
-                    this.trialService.setTrialChosen( this.nctIdChosen );
+                if (setChosenTrial === false) {
+                    this.nctIdChosen = trialInfo['nct_id'];
+                    this.trialService.setTrialChosen(this.nctIdChosen);
                     this.originalTrial = _.clone(this.trialChosen);
                     setChosenTrial = true;
                 }
-            } ).catch( ( error ) => {
-                this.messages.push( 'Fail to save to database ' + nctId );
-            } );
-        }, ( error ) => {
-            this.messages.push( nctId + ' not found' );
-        } );
+            }).catch((error) => {
+                this.messages.push('Fail to save to database ' + nctId);
+            });
+        }, (error) => {
+            this.messages.push(nctId + ' not found');
+        });
     }
+
     updateStatus( type: string ) {
         if ( type === 'curation' ) {
             this.db.object( 'Trials/' + this.nctIdChosen ).update( {

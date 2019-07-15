@@ -1,18 +1,18 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Additional, Trial } from '../trial/trial.model';
-import { Genomic } from '../genomic/genomic.model';
-import { Clinical } from '../clinical/clinical.model';
-import { MovingPath } from '../panel/movingPath.model';
-import { Arm } from '../arm/arm.model';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Additional, Trial} from '../trial/trial.model';
+import {Genomic} from '../genomic/genomic.model';
+import {Clinical} from '../clinical/clinical.model';
+import {MovingPath} from '../panel/movingPath.model';
+import {Arm} from '../arm/arm.model';
 import * as _ from 'lodash';
-import { environment } from '../environments/environment';
-import { EmailService } from './email.service';
-import { ConnectionService } from './connection.service';
-import { HttpErrorResponse } from '@angular/common/http';
-import { of } from 'rxjs/observable/of';
-import { catchError, map } from 'rxjs/operators';
-import { AngularFireDatabase, AngularFireObject } from '@angular/fire/database';
+import {environment} from '../environments/environment';
+import {EmailService} from './email.service';
+import {ConnectionService} from './connection.service';
+import {HttpErrorResponse} from '@angular/common/http';
+import {of} from 'rxjs/observable/of';
+import {catchError, map} from 'rxjs/operators';
+import {AngularFireDatabase, AngularFireObject} from '@angular/fire/database';
 
 @Injectable()
 export class TrialService {
@@ -112,7 +112,7 @@ export class TrialService {
                 });
             }
             // prepare subtypes by maintype
-            const queries =  {
+            const queries = {
                 'queries': mainTypeQueries
             };
             this.connectionService.getSubType(queries).subscribe((response: Array<any>) => {
@@ -143,8 +143,8 @@ export class TrialService {
         });
         // prepare oncokb variant list
         this.connectionService.getOncoKBVariant().subscribe((res) => {
-           const allAnnotatedVariants = res;
-           for (const item of  allAnnotatedVariants) {
+            const allAnnotatedVariants = res;
+            for (const item of  allAnnotatedVariants) {
                 if (item['gene']['hugoSymbol']) {
                     if (this.annotated_variants[item['gene']['hugoSymbol']]) {
                         this.annotated_variants[item['gene']['hugoSymbol']].push(item['alteration']);
@@ -152,12 +152,13 @@ export class TrialService {
                         this.annotated_variants[item['gene']['hugoSymbol']] = [item['alteration']];
                     }
                 }
-           }
-           for (const key of _.keys(this.annotated_variants)) {
+            }
+            for (const key of _.keys(this.annotated_variants)) {
                 this.annotated_variants[key].sort();
-           }
+            }
         });
     }
+
     createGenomic() {
         let genomicInput: Genomic;
         if (this.oncokb === true) {
@@ -194,6 +195,7 @@ export class TrialService {
         }
         return genomicInput;
     }
+
     createClinical() {
         const clinicalInput: Clinical = {
             age_numerical: '',
@@ -204,6 +206,7 @@ export class TrialService {
         };
         return clinicalInput;
     }
+
     createTrial() {
         const trial: Trial = {
             curation_status: '',
@@ -214,16 +217,18 @@ export class TrialService {
             short_title: '',
             phase: '',
             status: '',
-            treatment_list: { step: [] }
+            treatment_list: {step: []}
         };
         return trial;
     }
+
     createAdditional() {
         const additional: Additional = {
             note: ''
         };
         return additional;
     }
+
     fetchTrials() {
         this.trialsRef.snapshotChanges().subscribe((action) => {
             this.authorizedSource.next(true);
@@ -237,6 +242,7 @@ export class TrialService {
             this.authorizedSource.next(false);
         });
     }
+
     fetchAdditional() {
         this.additionalRef.snapshotChanges().subscribe((action) => {
             this.authorizedSource.next(true);
@@ -259,6 +265,7 @@ export class TrialService {
             });
         });
     }
+
     setTrialChosen(nctId: string) {
         this.nctIdChosenSource.next(nctId);
         for (const trial of this.trialList) {
@@ -266,7 +273,7 @@ export class TrialService {
                 if (_.isUndefined(trial['treatment_list'])) {
                     trial['treatment_list'] = {
                         step: [{
-                            arm:  [],
+                            arm: [],
                             match: []
                         }]
                     };
@@ -289,55 +296,69 @@ export class TrialService {
             }
         }
     }
+
     setAdditionalChosen(nctId: string) {
         if (!_.isUndefined(this.additionalObject[nctId])) {
             this.additionalChosenSource.next(this.additionalObject[nctId]);
         }
     }
+
     setGenomicInput(genomicInput: Genomic) {
         this.genomicInputSource.next(genomicInput);
     }
+
     setClinicalInput(clinicalInput: Clinical) {
         this.clinicalInputSource.next(clinicalInput);
     }
+
     setArmInput(armInput: Arm) {
         this.armInputSource.next(armInput);
     }
+
     setHasErrorInputField(hasErrorInputField: boolean) {
         this.hasErrorInputFieldSource.next(hasErrorInputField);
     }
+
     getStyle(indent: number) {
-        return { 'margin-left': (indent * 40) + 'px' };
+        return {'margin-left': (indent * 40) + 'px'};
     }
+
     getStatusOptions() {
         return this.statusOptions;
     }
+
     getSubTypesOptions() {
         return this.subTypesOptions;
     }
+
     loadDrugsOptions(query: string) {
         // prepare drugs list
         return this.connectionService.getDrugs(query).pipe(
             catchError(() => of([])),
-            map((rsp) =>  rsp['terms']),
+            map((rsp) => rsp['terms']),
         );
     }
 
     getSubToMainMapping() {
         return this.subToMainMapping;
     }
+
     getMainTypesOptions() {
         return this.mainTypesOptions;
     }
+
     getAllSubTypesOptions() {
         return this.allSubTypesOptions;
     }
+
     getOncokbVariants() {
         return this.annotated_variants;
     }
+
     getRef(path: string) {
         return this.db.object(path);
     }
+
     saveTrialById(id: string, data: object) {
         return new Promise((resolve, reject) => {
             this.db.object('Trials/' + id).set(data).then((result) => {
@@ -349,6 +370,7 @@ export class TrialService {
             });
         });
     }
+
     saveErrors(info: string, content: object, error: object) {
         if (info.includes('failed') && info.includes('database')) {
             this.emailService.sendEmail({
@@ -364,6 +386,7 @@ export class TrialService {
             });
         }
     }
+
     getNodeDisplayContent(key: string, node: object) {
         let result = '';
         if (node['no_' + key]) {
@@ -374,6 +397,7 @@ export class TrialService {
         }
         return result;
     }
+
     getErrorResponse(error: HttpErrorResponse, type: string) {
         if (error.status === 400) {
             alert('Sorry, your query is invalid.');

@@ -1,17 +1,19 @@
-import { Injectable } from '@angular/core';
-import { environment } from '../environments/environment';
-import { SERVER_API_URL } from '../app.constants';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
+import {Injectable} from '@angular/core';
+import {environment} from '../environments/environment';
+import {SERVER_API_URL} from '../app.constants';
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs/Observable';
+
 
 @Injectable()
 export class ConnectionService {
     frontEndOnly = environment.frontEndOnly ? environment.frontEndOnly : false;
     oncotreeVersion = environment.oncotreeVersion ? environment.oncotreeVersion : 'oncotree_latest_stable';
 
-    constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient) {
+    }
 
-    getAPIUrl(type: string) {
+    getAPIUrl(type: string, protocol_no = null) {
         if (type === 'Drugs') {
             return 'https://clinicaltrialsapi.cancer.gov/v1/interventions';
         }
@@ -31,6 +33,8 @@ export class ConnectionService {
                     return 'https://discover.mskcc.org:443/api/trials/';
                 case 'ExampleValidation':
                     return 'http://oncokb.org/api/v1/utils/match/variant?';
+                case 'MatchMiner':
+                    return 'http://localhost:5000/api/trial?where=%7B%22protocol_no%22:%22' + protocol_no + '%22%7D';
             }
         } else {
             switch (type) {
@@ -66,6 +70,11 @@ export class ConnectionService {
 
     getTrialByProtocolNo(protocolNo: string) {
         return this.http.get(this.getAPIUrl('MskTrials') + protocolNo);
+    }
+
+    getTrialFromMatchMiner(protocolNo: string) {
+        // @ts-ignore
+        return this.http.get(this.getAPIUrl('MatchMiner', protocolNo));
     }
 
     getMainType() {
