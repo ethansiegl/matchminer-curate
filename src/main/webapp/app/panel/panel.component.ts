@@ -419,21 +419,15 @@ export class PanelComponent implements OnInit {
             const ageGroups = clinicalNode['age_numerical'].split(',');
             ageGroups[0] = ageGroups[0].trim();
             ageGroups[1] = ageGroups[1].trim();
-            const ageNumber0 = Number(ageGroups[0].match(/\d\d?$/));
-            const ageNumber1 = Number(ageGroups[1].match(/\d\d?$/));
-            let clinicalNodeToSave = {};
-            if ((ageGroups[0].includes('>') && ageGroups[1].includes('<') && ageNumber0 <= ageNumber1) ||
-                (ageGroups[0].includes('<') && ageGroups[1].includes('>') && ageNumber0 > ageNumber1)) {
-                clinicalNodeToSave = {
-                    and: []
-                };
-                const tempClinicalNode0 = _.clone( clinicalNode );
-                tempClinicalNode0[ 'age_numerical' ] = ageGroups[0];
-                clinicalNodeToSave[ 'and' ].push( { clinical: tempClinicalNode0 } );
-                const tempClinicalNode1 = _.clone( clinicalNode );
-                tempClinicalNode1[ 'age_numerical' ] = ageGroups[1];
-                clinicalNodeToSave[ 'and' ].push( { clinical: tempClinicalNode1 } );
-            }
+            const clinicalNodeToSave = {
+                and: []
+            };
+            const tempClinicalNode0 = _.clone( clinicalNode );
+            tempClinicalNode0[ 'age_numerical' ] = ageGroups[0];
+            clinicalNodeToSave[ 'and' ].push( { clinical: tempClinicalNode0 } );
+            const tempClinicalNode1 = _.clone( clinicalNode );
+            tempClinicalNode1[ 'age_numerical' ] = ageGroups[1];
+            clinicalNodeToSave[ 'and' ].push( { clinical: tempClinicalNode1 } );
             return clinicalNodeToSave;
         } else {
             return {clinical: clinicalNode};
@@ -504,6 +498,8 @@ export class PanelComponent implements OnInit {
         return keys.indexOf(Object.keys(a)[0]) - keys.indexOf(Object.keys(b)[0]);
     }
     editNode() {
+        // Reset hasErrorInputField to false so "save/add" button won't be disabled for previous check result.
+        this.trialService.setHasErrorInputField(false);
         this.operationPool['currentPath'] = this.path;
         this.operationPool['editing'] = true;
         if (this.unit.hasOwnProperty('genomic')) {
