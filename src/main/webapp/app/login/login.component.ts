@@ -26,7 +26,10 @@ export class LoginComponent {
         });
     }
     login() {
-        this.afAuth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then((res) => {
+        let x = new firebase.auth.GoogleAuthProvider()
+        console.log(x)
+        this.afAuth.auth.signInWithPopup(x).then((res) => {
+
         }).catch((err) => {
             alert('Failed to log in');
         });
