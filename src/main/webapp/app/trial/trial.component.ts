@@ -65,6 +65,8 @@ export class TrialComponent implements OnInit, AfterViewInit {
     }
     ngOnInit(): void {
         $.fn[ 'dataTable' ].ext.search.push( ( settings, data ) => {
+            console.log('init');
+            console.log(data);
             if ( this.hideArchived === 'Yes' && data[ 5 ] === 'Yes' ) {
                 return false;
             } else if ( this.hideArchived === 'No' && data[ 5 ] === 'No' ) {
@@ -203,6 +205,7 @@ export class TrialComponent implements OnInit, AfterViewInit {
             this.messages.push( nctId + ' not found' );
         } );
     }
+
     updateStatus( type: string ) {
         if ( type === 'curation' ) {
             this.db.object( 'Trials/' + this.nctIdChosen ).update( {

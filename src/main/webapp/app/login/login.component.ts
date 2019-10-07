@@ -14,22 +14,22 @@ export class LoginComponent {
     public user: Observable<firebase.User>;
     oncokb = environment['oncokb'] ? environment['oncokb'] : false;
     constructor(public afAuth: AngularFireAuth, private trialService: TrialService, private metaService: MetaService) {
-        this.user = this.afAuth.authState;
-        this.user.subscribe((res) => {
-            if (res && res.uid) {
-                this.trialService.fetchTrials();
-                this.trialService.fetchAdditional();
-                if (this.oncokb) {
-                    this.metaService.fetchMetas();
-                }
-            }
-        });
+        this.trialService.fetchTrials();
+        this.trialService.fetchAdditional();
+
+        // this.user = this.afAuth.authState;
+        // this.user.subscribe((res) => {
+        //     if (res && res.uid) {
+        //         // this.trialService.fetchTrials();
+        //         // this.trialService.fetchAdditional();
+        //         if (this.oncokb) {
+        //             this.metaService.fetchMetas();
+        //         }
+        //     }
+        // });
     }
     login() {
-        let x = new firebase.auth.GoogleAuthProvider()
-        console.log(x)
-        this.afAuth.auth.signInWithPopup(x).then((res) => {
-
+        this.afAuth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then((res) => {
         }).catch((err) => {
             alert('Failed to log in');
         });

@@ -226,6 +226,7 @@ export class TrialService {
         return additional;
     }
     fetchTrials() {
+        console.log('fetch trials');
         this.trialsRef.snapshotChanges().subscribe((action) => {
             this.authorizedSource.next(true);
             this.trialList = [];
@@ -237,6 +238,7 @@ export class TrialService {
             this.trialListSource.next(this.trialList);
             this.setTrialChosen(this.nctIdChosen);
         }, (error) => {
+            console.log('error (212');
             this.authorizedSource.next(false);
         });
     }
