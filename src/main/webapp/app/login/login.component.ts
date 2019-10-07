@@ -35,9 +35,10 @@ export class LoginComponent {
         });
     }
     logout() {
-        this.afAuth.auth.signOut().then((res) => {
-        }).catch((err) => {
-            console.log('Failed to log out');
-        });
+        window.location.reload()
+        // this.afAuth.auth.signOut().then((res) => {
+        // }).catch((err) => {
+        //     console.log('Failed to log out');
+        // });
     }
 }

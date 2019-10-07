@@ -4,5 +4,6 @@
   <div><img src="{{user.photoURL}}" class="login-photo"/></div>
 </div>
 <ng-template #showLogin>
-  <button class="btn btn-primary login-panel" (click)="login()">Login with Google</button>
+<!--  <button class="btn btn-primary login-panel" (click)="login()">Login with Google</button>-->
+    <div class="login-panel"><u><a (click)="logout()">Logout</a></u></div>
 </ng-template>
