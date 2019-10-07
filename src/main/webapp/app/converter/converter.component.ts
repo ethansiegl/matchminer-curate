@@ -149,11 +149,11 @@ export class ConverterComponent implements OnInit, AfterViewInit {
 
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
-                var response = JSON.parse(xhr.responseText);
+                let response = JSON.parse(xhr.responseText);
                 console.log(xhr.responseText);
-                if (xhr.status === 200 && response.status === 'OK') {
+                console.log(xhr.status);
+                if (xhr.status >= 200 && xhr.status < 299 ) {
                     alert('Import Successful');
-                    console.log('successful');
                 } else {
                     alert('Error importing');
                 }
