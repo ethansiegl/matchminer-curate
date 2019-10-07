@@ -36,6 +36,15 @@
                 <button class="btn btn-primary button-margin" (click)="downloadTrials(false)" *ngIf="downloadIdList.length > 0">Download Selected</button>
             </div>
         </div>
+        <br />
+        <br />
+        <div class="row">
+            <div class="col-md-5"></div>
+            <div class="col-md-7">
+                <button class="btn btn-primary button-margin" (click)="importIntoMatchMiner(true)">Import All</button>
+                <button class="btn btn-primary button-margin" (click)="importIntoMatchMiner(false)" *ngIf="downloadIdList.length > 0">Import Selected</button>
+            </div>
+        </div>
         <br>
         <div class="row upload-container">
             <div class="col-md-5">
