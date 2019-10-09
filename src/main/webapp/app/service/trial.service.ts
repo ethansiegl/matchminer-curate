@@ -215,6 +215,10 @@ export class TrialService {
             short_title: '',
             phase: '',
             status: '',
+            summary: '',
+            drug_list: {},
+            staff_list: {},
+            prior_treatment_requirement: [],
             treatment_list: { step: [] }
         };
         return trial;
@@ -226,7 +230,6 @@ export class TrialService {
         return additional;
     }
     fetchTrials() {
-        console.log('fetch trials');
         this.trialsRef.snapshotChanges().subscribe((action) => {
             this.authorizedSource.next(true);
             this.trialList = [];

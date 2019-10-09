@@ -120,21 +120,22 @@ export class ConverterComponent implements OnInit, AfterViewInit {
             _.forEach(this.trialList, function (trial) {
                 that.importSingleTrial(trial);
             }, this)
-        } else if (this.downloadIdList.length >= 1) {
-            _.forEach(this.downloadIdList, function (NCTID) {
-                let trial_to_import = null;
-
-                _.forEach(that.trialList, function (trial) {
-                    if (trial.nct_id == NCTID) {
-                        trial_to_import = trial;
-                    }
-                }, that);
-
-                if (trial_to_import != null) {
-                    that.importSingleTrial(trial_to_import);
-                }
-            }, this)
         }
+        // else if (this.downloadIdList.length >= 1) {
+        //     _.forEach(this.downloadIdList, function (NCTID) {
+        //         let trial_to_import = null;
+        //
+        //         _.forEach(that.trialList, function (trial) {
+        //             if (trial.nct_id == NCTID) {
+        //                 trial_to_import = trial;
+        //             }
+        //         }, that);
+        //
+        //         if (trial_to_import != null) {
+        //             that.importSingleTrial(trial_to_import);
+        //         }
+        //     }, this)
+        // }
     }
 
     importSingleTrial(trial: object) {

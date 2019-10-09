@@ -6,7 +6,11 @@ export interface Trial {
     long_title: string;
     short_title: string;
     phase: string;
+    summary: string;
+    drug_list: object;
+    prior_treatment_requirement: Array<String>;
     status: string;
+    staff_list: object;
     treatment_list: { step: Array<Step> };
 }
 interface Step {

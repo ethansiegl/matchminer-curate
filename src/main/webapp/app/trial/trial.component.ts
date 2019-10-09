@@ -65,8 +65,6 @@ export class TrialComponent implements OnInit, AfterViewInit {
     }
     ngOnInit(): void {
         $.fn[ 'dataTable' ].ext.search.push( ( settings, data ) => {
-            console.log('init');
-            console.log(data);
             if ( this.hideArchived === 'Yes' && data[ 5 ] === 'Yes' ) {
                 return false;
             } else if ( this.hideArchived === 'No' && data[ 5 ] === 'No' ) {
@@ -154,6 +152,7 @@ export class TrialComponent implements OnInit, AfterViewInit {
         this.connectionService.importTrials( nctId ).subscribe( ( res ) => {
             const trialInfo = res;
             const armsInfo: any = [];
+            console.log(res)
             _.forEach( trialInfo[ 'arms' ], function( arm ) {
                 if ( arm.arm_description !== null ) {
                     armsInfo.push( {
@@ -172,6 +171,37 @@ export class TrialComponent implements OnInit, AfterViewInit {
                 short_title: trialInfo[ 'brief_title' ],
                 phase: trialInfo[ 'phase' ][ 'phase' ],
                 status: trialInfo[ 'current_trial_status' ],
+                drug_list: {'drug': []},
+                summary: trialInfo[ 'brief_title' ],
+                prior_treatment_requirement: [],
+                staff_list: {
+                    protocol_staff: [
+                        {
+                            "email_address": "john@doe.org",
+                            "first_name": "John",
+                            "institution_name": "University Texas Southwestern",
+                            "last_name": "Doe",
+                            "middle_name": "Dublee",
+                            "npi": "",
+                            "phone_no": "123-456-678",
+                            "staff_role": "Site Principal Investigator",
+                            "start_date": 1416805200000,
+                            "stop_date": 1426651200000
+                        },
+                        {
+                            "email_address": "jane@doe.org",
+                            "first_name": "Jane",
+                            "institution_name": "University Texas Southwestern",
+                            "last_name": "Doe",
+                            "middle_name": "Dublee",
+                            "npi": "",
+                            "phone_no": "987-654-321",
+                            "staff_role": "Overall Principal Investigator",
+                            "start_date": 1416805200001,
+                            "stop_date": 1426651200002
+                        }
+                    ]
+                },
                 treatment_list: {
                     step: [ {
                         arm: armsInfo,
@@ -179,6 +209,13 @@ export class TrialComponent implements OnInit, AfterViewInit {
                     } ]
                 }
             };
+
+            for (let elg of  trialInfo['eligibility']['unstructured']) {
+                trial.prior_treatment_requirement.push(elg.description)
+            }
+
+            console.log(trial);
+
             this.db.object( 'Trials/' + trialInfo[ 'nct_id' ] ).set( trial ).then( ( response ) => {
                 this.messages.push( 'Successfully imported ' + trialInfo[ 'nct_id' ] );
                 if (this.oncokb) {
