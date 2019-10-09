@@ -8,6 +8,7 @@ export interface Trial {
     phase: string;
     summary: string;
     drug_list: object;
+    principal_investigator: string;
     prior_treatment_requirement: Array<String>;
     status: string;
     staff_list: object;

@@ -212,6 +212,7 @@ export class TrialService {
             nct_id: '',
             protocol_no: '',
             long_title: '',
+            principal_investigator: '',
             short_title: '',
             phase: '',
             status: '',

@@ -202,6 +202,7 @@ export class TrialComponent implements OnInit, AfterViewInit {
                         }
                     ]
                 },
+                principal_investigator: trialInfo['principal_investigator'],
                 treatment_list: {
                     step: [ {
                         arm: armsInfo,
