@@ -161,7 +161,7 @@
     </div>
 </div>
 <ng-template #editPanel>
-    <span>-genomic:</span>
+    <span>genomic:</span>
     <jhi-panel [type]="'delete,edit,relocate,copy'" [unit]="unit" [path]="path"></jhi-panel>
     <br/>
     <div [ngStyle]="getStyle()" *ngIf="operationPool['relocate'] !== true && operationPool['copy'] !== true && operationPool['currentPath'] === path; else panel">

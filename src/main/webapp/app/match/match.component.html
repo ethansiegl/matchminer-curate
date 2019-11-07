@@ -21,14 +21,14 @@
                     </div>
                     <div *ngIf="unit1.and">
                         <div>
-                            -and:
+                            and:
                             <jhi-panel [type]="'add,delete,relocate,copy,exchange,destination'" [path]="path+','+i+','+i1"></jhi-panel>
                         </div>
                         <jhi-match [match]="unit1.and" [base]="base+1" [path]="path+','+i+','+i1"></jhi-match>
                     </div>
                     <div *ngIf="unit1.or">
                         <div>
-                            -or:
+                            or:
                             <jhi-panel [type]="'add,delete,relocate,copy,exchange,destination'" [path]="path+','+i+','+i1"></jhi-panel>
                         </div>
                         <jhi-match [match]="unit1.or" [base]="base+1" [path]="path+','+i+','+i1"></jhi-match>
@@ -38,7 +38,7 @@
         </div>
         <div *ngIf="unit.and">
             <div [ngStyle]="getStyle(0)">
-                -and:
+                and:
                 <jhi-panel [type]="'add,delete,relocate,copy,exchange,destination'" [path]="path+','+i"></jhi-panel>
             </div>
             <div *ngFor="let unit2 of unit.and; let i2 = index">
@@ -51,14 +51,14 @@
                     </div>
                     <div *ngIf="unit2.or">
                         <div>
-                            -or:
+                            or:
                             <jhi-panel [type]="'add,delete,relocate,copy,exchange,destination'" [path]="path+','+i+','+i2"></jhi-panel>
                         </div>
                         <jhi-match [match]="unit2.or" [base]="base+1" [path]="path+','+i+','+i2"></jhi-match>
                     </div>
                     <div *ngIf="unit2.and">
                         <div>
-                            -and:
+                            and:
                             <jhi-panel [type]="'add,delete,relocate,copy,exchange,destination'" [path]="path+','+i+','+i2"></jhi-panel>
                         </div>
                         <jhi-match [match]="unit2.and" [base]="base+1" [path]="path+','+i+','+i2"></jhi-match>

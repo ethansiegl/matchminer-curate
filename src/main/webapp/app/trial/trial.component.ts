@@ -152,7 +152,6 @@ export class TrialComponent implements OnInit, AfterViewInit {
         this.connectionService.importTrials( nctId ).subscribe( ( res ) => {
             const trialInfo = res;
             const armsInfo: any = [];
-            console.log(res)
             _.forEach(trialInfo['arms'], function(arm) {
                 if (arm.arm_description !== null) {
                     armsInfo.push({
@@ -189,15 +188,15 @@ export class TrialComponent implements OnInit, AfterViewInit {
                 }
             };
 
-            let min_age = trialInfo['eligibility']['structured']['min_age'].match(/\d+/g).map(Number)[0];
-            let max_age = trialInfo['eligibility']['structured']['max_age'].match(/\d+/g).map(Number)[0];
+            const min_age = trialInfo['eligibility']['structured']['min_age'].match(/\d+/g).map(Number)[0];
+            const max_age = trialInfo['eligibility']['structured']['max_age'].match(/\d+/g).map(Number)[0];
             if (min_age >= 18) {
                 trial['age'] = 'Adults';
             } else if (max_age <= 18) {
                 trial['age'] = 'Children';
             }
             for (let elg of  trialInfo['eligibility']['unstructured']) {
-                trial.prior_treatment_requirement.push(elg.description)
+                trial.prior_treatment_requirement.push(elg.description);
             }
 
             this.db.object( 'Trials/' + trialInfo[ 'nct_id' ] ).set( trial ).then( ( response ) => {

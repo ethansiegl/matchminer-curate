@@ -17,16 +17,19 @@ export class LoginComponent {
         this.trialService.fetchTrials();
         this.trialService.fetchAdditional();
 
-        // this.user = this.afAuth.authState;
-        // this.user.subscribe((res) => {
-        //     if (res && res.uid) {
-        //         // this.trialService.fetchTrials();
-        //         // this.trialService.fetchAdditional();
-        //         if (this.oncokb) {
-        //             this.metaService.fetchMetas();
-        //         }
-        //     }
-        // });
+        if (!environment['demo']) {
+            this.user = this.afAuth.authState;
+            this.user.subscribe((res) => {
+                if (res && res.uid) {
+                    this.trialService.fetchTrials();
+                    this.trialService.fetchAdditional();
+                    if (this.oncokb) {
+                        this.metaService.fetchMetas();
+                    }
+                }
+            });
+        }
+
     }
     login() {
         this.afAuth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then((res) => {
@@ -35,10 +38,13 @@ export class LoginComponent {
         });
     }
     logout() {
-        window.location.reload()
-        // this.afAuth.auth.signOut().then((res) => {
-        // }).catch((err) => {
-        //     console.log('Failed to log out');
-        // });
+         if (environment['demo']) {
+            window.location.reload();
+         } else {
+             this.afAuth.auth.signOut().then((res) => {
+             }).catch((err) => {
+                 console.log('Failed to log out');
+             });
+         }
     }
 }
