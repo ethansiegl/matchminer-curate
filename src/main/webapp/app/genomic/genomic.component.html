@@ -123,40 +123,38 @@
                     </span>
                 </div>
             </div>
-            <div *ngIf="false">
-                <div class="row borderMargin">
-                    <div class="col-sm-3">ms_status:</div>
-                    <div class="col-sm-1">
-                        <label for="no_ms_status1">Not</label>
-                        <input id="no_ms_status1" type="checkbox" class="notLabel" [(ngModel)]="genomicInput.no_ms_status"/>
-                    </div>
-                    <div class="col-sm-8">
-                        <input type="text" size="36" [(ngModel)]="genomicInput.ms_status"/>
-                    </div>
+            <div class="row borderMargin">
+                <div class="col-sm-3">ms_status:</div>
+                <div class="col-sm-1">
+                    <label for="no_ms_status1">Not</label>
+                    <input id="no_ms_status1" type="checkbox" class="notLabel" [(ngModel)]="genomicInput.no_ms_status"/>
                 </div>
-                <div class="row borderMargin">
-                    <div class="col-sm-3">mmr_status:</div>
-                    <div class="col-sm-1">
-                        <label for="no_mmr_status1">Not</label>
-                        <input id="no_mmr_status1" type="checkbox" class="notLabel" [(ngModel)]="genomicInput.no_mmr_status"/>
-                    </div>
-                    <div class="col-sm-8">
-                        <input type="text" size="36" [(ngModel)]="genomicInput.mmr_status"/>
-                    </div>
-                </div>
-                <div class="row borderMargin">
-                    <div class="col-sm-4">fusion_partner_hugo_symbol:</div>
-                    <div class="col-sm-8">
-                        <input type="text" size="36" [(ngModel)]="genomicInput.fusion_partner_hugo_symbol"/>
-                    </div>
-                </div>
-                <div class="row borderMargin">
-                    <div class="col-sm-4">display_name:</div>
-                    <div class="col-sm-8">
-                        <input type="text" size="36" [(ngModel)]="genomicInput.display_name"/>
-                    </div>
+                <div class="col-sm-8">
+                    <input type="text" size="36" [(ngModel)]="genomicInput.ms_status"/>
                 </div>
             </div>
+            <div class="row borderMargin">
+                <div class="col-sm-3">mmr_status:</div>
+                <div class="col-sm-1">
+                    <label for="no_mmr_status1">Not</label>
+                    <input id="no_mmr_status1" type="checkbox" class="notLabel" [(ngModel)]="genomicInput.no_mmr_status"/>
+                </div>
+                <div class="col-sm-8">
+                    <input type="text" size="36" [(ngModel)]="genomicInput.mmr_status"/>
+                </div>
+            </div>
+            <div class="row borderMargin">
+                <div class="col-sm-4">fusion_partner_hugo_symbol:</div>
+                <div class="col-sm-8">
+                    <input type="text" size="36" [(ngModel)]="genomicInput.fusion_partner_hugo_symbol"/>
+                </div>
+            </div>
+            <!--<div class="row borderMargin">-->
+                <!--<div class="col-sm-4">display_name:</div>-->
+                <!--<div class="col-sm-8">-->
+                    <!--<input type="text" size="36" [(ngModel)]="genomicInput.display_name"/>-->
+                <!--</div>-->
+            <!--</div>-->
         </div>
     </div>
 </div>

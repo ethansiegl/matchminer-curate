@@ -13,11 +13,12 @@ import { MetaService } from '../service/meta.service';
 export class LoginComponent {
     public user: Observable<firebase.User>;
     oncokb = environment['oncokb'] ? environment['oncokb'] : false;
+    demo = environment['demo'] ? environment['demo'] : false;
     constructor(public afAuth: AngularFireAuth, private trialService: TrialService, private metaService: MetaService) {
         this.trialService.fetchTrials();
         this.trialService.fetchAdditional();
 
-        if (!environment['demo']) {
+        if (!this.demo) {
             this.user = this.afAuth.authState;
             this.user.subscribe((res) => {
                 if (res && res.uid) {
@@ -38,7 +39,7 @@ export class LoginComponent {
         });
     }
     logout() {
-         if (environment['demo']) {
+         if (this.demo) {
             window.location.reload();
          } else {
              this.afAuth.auth.signOut().then((res) => {
