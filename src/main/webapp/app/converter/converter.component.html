@@ -38,12 +38,13 @@
         </div>
         <br />
         <br />
-<!--        <div class="row">-->
-<!--            <div class="col-md-5"></div>-->
-<!--            <div class="col-md-7">-->
-<!--                <button class="btn btn-primary button-margin" (click)="importIntoMatchMiner(true)">Import Into MatchMiner</button>-->
-<!--            </div>-->
-<!--        </div>-->
+        <div class="row">
+            <div class="col-md-5"></div>
+            <div class="col-md-7">
+                <button class="btn btn-primary button-margin" (click)="importIntoMatchMiner(true)">Import All Into MatchMiner</button>
+                <button class="btn btn-primary button-margin" (click)="importIntoMatchMiner(false)" *ngIf="downloadIdList.length > 0">Import Selected</button>
+            </div>
+        </div>
         <br>
         <div class="row upload-container">
             <div class="col-md-5">
