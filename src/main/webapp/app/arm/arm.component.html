@@ -1,17 +1,19 @@
-<span class="indent1">arm code: <jhi-panel [type]="'delete,edit,copy'" [path]="path" [arm]="true" [unit]="unit"></jhi-panel></span>
+<span class="indent1 super-bold">Arm Code:
+    <jhi-panel [type]="'delete,edit,copy'" [path]="path" [arm]="true" [unit]="unit"></jhi-panel>
+</span>
 <div *ngIf="operationPool['currentPath'] === path && operationPool['copy'] !== true; else dispalyArm">
     <div class="indent2">
         <input [(ngModel)]="armInput.arm_code" size="100"/>
     </div>
-    <span class="indent1">arm description: </span>
+    <span class="indent1">Arm Description: </span>
     <div class="armContent">
         <textarea id="description" rows="3" cols="100" [(ngModel)]="armInput.arm_description"></textarea>
     </div>
-    <span class="indent1">arm internal id: </span>
+    <span class="indent1">Arm Internal ID: </span>
     <div class="armContent">
         <input [(ngModel)]="armInput.arm_internal_id" size="100"/>
     </div>
-    <span class="indent1">arm suspended: </span>
+    <span class="indent1">Arm Suspended: </span>
     <div class="armContent">
         <span id="suspended">
             <label for="suspended-y">
@@ -23,7 +25,7 @@
         </span>
     </div>
     <div *ngIf="oncokb">
-        <span class="indent1">arm type: </span>
+        <span class="indent1">Arm Type: </span>
         <div class="armContent">
             <label for="control-arm" class="label-margin">
                 <input id="control-arm" type="radio" name="arm-type" value="Control Arm" [(ngModel)]="armInput.arm_type" (click)="unCheckRadio('arm_type', $event)"/> Control Arm
@@ -32,11 +34,11 @@
                 <input id="placebo-arm" type="radio" name="arm-type" value="Placebo Arm" [(ngModel)]="armInput.arm_type" (click)="unCheckRadio('arm_type', $event)"/> Placebo Arm
             </label>
         </div>
-        <span class="indent1">arm info: </span>
+        <span class="indent1">Arm Info: </span>
         <div class="armContent">
             <textarea id="arm-info" rows="3" cols="100" [(ngModel)]="armInput.arm_info"></textarea>
         </div>
-        <span class="indent1">arm eligibility: </span>
+        <span class="indent1">Arm Eligibility: </span>
         <div class="armContent">
             <textarea id="arm-eligibility" rows="3" cols="100" [(ngModel)]="armInput.arm_eligibility"></textarea>
         </div>
@@ -48,20 +50,20 @@
 </div>
 <ng-template #dispalyArm>
     <div class="armContent">{{unit.arm_code}}</div>
-    <span class="indent1">arm description: </span>
+    <span class="indent1 super-bold">Arm Description: </span>
     <div class="armContent">{{unit.arm_description}}</div>
-    <span class="indent1">arm internal id: </span>
+    <span class="indent1 super-bold">Arm Internal ID: </span>
     <div class="armContent">{{unit.arm_internal_id}}</div>
-    <span class="indent1">arm suspended: </span>
+    <span class="indent1 super-bold">Arm Suspended: </span>
     <div class="armContent">{{unit.arm_suspended}}</div>
     <div *ngIf="oncokb">
-        <span class="indent1">arm type: </span>
+        <span class="indent1 super-bold">Arm Type: </span>
         <div class="armContent">{{unit.arm_type}}</div>
-        <span class="indent1">arm info: </span>
+        <span class="indent1 super-bold">Arm Info: </span>
         <div class="armContent">{{unit.arm_info}}</div>
-        <span class="indent1">arm eligibility: </span>
+        <span class="indent1 super-bold">Arm Eligibility: </span>
         <div class="armContent">{{unit.arm_eligibility}}</div>
-        <span class="indent1">drugs: </span>
+        <span class="indent1 super-bold">drugs: </span>
         <div class="armContent">{{displayDrugName(unit.drugs)}}</div>
     </div>
 </ng-template>

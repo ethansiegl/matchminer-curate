@@ -160,6 +160,7 @@ export class TrialService {
         });
     }
     createGenomic() {
+        //TODO here to add
         let genomicInput: Genomic;
         if (this.oncokb === true) {
             genomicInput = {
@@ -183,6 +184,9 @@ export class TrialService {
                 exon: '',
                 cnv_call: '',
                 wildtype: '',
+                fusion_partner_hugo_symbol: '',
+                ms_status: '',
+                mmr_status: '',
                 no_hugo_symbol: false,
                 no_annotated_variant: false,
                 no_protein_change: false,
