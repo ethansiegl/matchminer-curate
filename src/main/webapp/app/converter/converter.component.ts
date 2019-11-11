@@ -137,20 +137,72 @@ export class ConverterComponent implements OnInit, AfterViewInit {
         const _class = this;
         this.removeAttributes(trial);
         this.formatForMatchMiner(trial);
-        const content = JSON.stringify(trial, null, 2);
 
+        //
+        // let mm_api_trial = this.http.get(url);
+        // mm_api_trial.subscribe(res => {
+        //     if (res['_items'].length > 0) {
+        //         //To issue PUT, python-eve API requires etag to be present
+        //         trial['_etag'] = res['_items'][0]._etag;
+        //         let trial_put = this.http.put(url, trial, { headers: headers }).toPromise();
+        //         trial_put.then(res => {
+        //             _class.uploadMessage['content'] = 'Imported Successfully';
+        //             _class.uploadMessage['color'] = 'green';
+        //         }).catch(res => {
+        //             _class.uploadMessage['content'] = JSON.stringify(res);
+        //             _class.uploadMessage['color'] = 'red';
+        //         })
+        //     } else {
+        //         let trial_post = this.http.post(url, trial, { headers: headers }).toPromise();
+        //         trial_post.then(res => {
+        //             _class.uploadMessage['content'] = 'Imported Successfully';
+        //             _class.uploadMessage['color'] = 'green';
+        //         }).catch(res => {
+        //             _class.uploadMessage['content'] = JSON.stringify(res);
+        //             _class.uploadMessage['color'] = 'red';
+        //         })
+        //     }
+        // });
+
+        let url = environment.apiAddress + '?where={"nct_id":' + '"' + trial['nct_id'] + '"' + '}';
+        let mm_api_trial = this.http.get(url);
+        mm_api_trial.subscribe(res => {
+            if (res['_items'].length == 0) {
+                this.sendMMApiRequest(trial);
+            } else {
+                let api_trial = res['_items'][0];
+                let headers = new HttpHeaders({
+                    'Content-Type': 'application/json',
+                    'Authorization': environment.apiToken,
+                    'If-Match': api_trial['_etag']
+                });
+                //TODO send a PATCH request instead
+                let dele = this.http.delete(environment.apiAddress + '/' + api_trial['_id'], {headers: headers}).toPromise();
+                dele.then(res => {
+                    this.sendMMApiRequest(trial);
+                }).catch(res => {
+                    _class.uploadMessage['content'] = JSON.stringify(res);
+                    _class.uploadMessage['color'] = 'red';
+                });
+            }
+        });
+    }
+
+    sendMMApiRequest(trial) {
+        const _class = this;
         const url = environment.apiAddress;
         const xhr = new XMLHttpRequest();
         xhr.open('POST', url, true);
         xhr.setRequestHeader('Content-type', 'application/json');
         xhr.setRequestHeader('Authorization', environment.apiToken);
+        const content = JSON.stringify(trial, null, 2);
         xhr.send(content);
 
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4) {
                 const response = JSON.parse(xhr.responseText);
-                if (xhr.status >= 200 && xhr.status < 299 ) {
-                    _class.uploadMessage['content'] = 'Imported Successfully';
+                if (xhr.status >= 200 && xhr.status < 299) {
+                    _class.uploadMessage['content'] = 'Imported ' + trial['protocol_no'] + ' Successfully';
                     _class.uploadMessage['color'] = 'green';
                 } else {
                     _class.uploadMessage['content'] = JSON.stringify(response);
