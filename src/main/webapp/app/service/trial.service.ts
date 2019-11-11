@@ -160,6 +160,7 @@ export class TrialService {
         });
     }
     createGenomic() {
+        //TODO here to add
         let genomicInput: Genomic;
         if (this.oncokb === true) {
             genomicInput = {
@@ -183,6 +184,9 @@ export class TrialService {
                 exon: '',
                 cnv_call: '',
                 wildtype: '',
+                fusion_partner_hugo_symbol: '',
+                ms_status: '',
+                mmr_status: '',
                 no_hugo_symbol: false,
                 no_annotated_variant: false,
                 no_protein_change: false,
@@ -210,13 +214,18 @@ export class TrialService {
             curation_status: '',
             archived: '',
             nct_id: '',
+            age: '',
             protocol_no: '',
             long_title: '',
             principal_investigator: '',
             short_title: '',
             phase: '',
+            protocol_target_accrual: null,
+            sponsor: '',
             status: '',
+            protocol_type: '',
             summary: '',
+            site_list: {},
             drug_list: {},
             staff_list: {},
             prior_treatment_requirement: [],

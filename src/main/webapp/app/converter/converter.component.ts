@@ -115,52 +115,101 @@ export class ConverterComponent implements OnInit, AfterViewInit {
     }
 
     importIntoMatchMiner(isAll: boolean) {
-        let that = this;
+        let to_download = [];
+        const download_list = this.downloadIdList;
+        const trial_list = this.trialList;
         if (isAll) {
-            _.forEach(this.trialList, function (trial) {
-                that.importSingleTrial(trial);
-            }, this)
+            to_download = trial_list;
+        } else {
+            _.forEach(trial_list, function(trial) {
+                if (download_list.includes(trial['nct_id']) === true) {
+                    to_download.push(trial);
+                }
+            }, this);
         }
-        // else if (this.downloadIdList.length >= 1) {
-        //     _.forEach(this.downloadIdList, function (NCTID) {
-        //         let trial_to_import = null;
-        //
-        //         _.forEach(that.trialList, function (trial) {
-        //             if (trial.nct_id == NCTID) {
-        //                 trial_to_import = trial;
-        //             }
-        //         }, that);
-        //
-        //         if (trial_to_import != null) {
-        //             that.importSingleTrial(trial_to_import);
-        //         }
-        //     }, this)
-        // }
+        const _class = this;
+        _.forEach(to_download, function(trial) {
+            _class.importSingleTrial(trial);
+        }, this);
     }
 
     importSingleTrial(trial: object) {
+        const _class = this;
         this.removeAttributes(trial);
-        let content = JSON.stringify(trial, null, 2);
+        this.formatForMatchMiner(trial);
 
-        let url = "http://35.193.82.240:5000/api/trial";
-        let xhr = new XMLHttpRequest();
-        xhr.open("POST", url, true);
-        xhr.setRequestHeader("Content-type", "application/json");
-        xhr.setRequestHeader("Authorization", environment.apiToken);
+        //
+        // let mm_api_trial = this.http.get(url);
+        // mm_api_trial.subscribe(res => {
+        //     if (res['_items'].length > 0) {
+        //         //To issue PUT, python-eve API requires etag to be present
+        //         trial['_etag'] = res['_items'][0]._etag;
+        //         let trial_put = this.http.put(url, trial, { headers: headers }).toPromise();
+        //         trial_put.then(res => {
+        //             _class.uploadMessage['content'] = 'Imported Successfully';
+        //             _class.uploadMessage['color'] = 'green';
+        //         }).catch(res => {
+        //             _class.uploadMessage['content'] = JSON.stringify(res);
+        //             _class.uploadMessage['color'] = 'red';
+        //         })
+        //     } else {
+        //         let trial_post = this.http.post(url, trial, { headers: headers }).toPromise();
+        //         trial_post.then(res => {
+        //             _class.uploadMessage['content'] = 'Imported Successfully';
+        //             _class.uploadMessage['color'] = 'green';
+        //         }).catch(res => {
+        //             _class.uploadMessage['content'] = JSON.stringify(res);
+        //             _class.uploadMessage['color'] = 'red';
+        //         })
+        //     }
+        // });
+
+        let url = environment.apiAddress + '?where={"nct_id":' + '"' + trial['nct_id'] + '"' + '}';
+        let mm_api_trial = this.http.get(url);
+        mm_api_trial.subscribe(res => {
+            if (res['_items'].length == 0) {
+                this.sendMMApiRequest(trial);
+            } else {
+                let api_trial = res['_items'][0];
+                let headers = new HttpHeaders({
+                    'Content-Type': 'application/json',
+                    'Authorization': environment.apiToken,
+                    'If-Match': api_trial['_etag']
+                });
+                //TODO send a PATCH request instead
+                let dele = this.http.delete(environment.apiAddress + '/' + api_trial['_id'], {headers: headers}).toPromise();
+                dele.then(res => {
+                    this.sendMMApiRequest(trial);
+                }).catch(res => {
+                    _class.uploadMessage['content'] = JSON.stringify(res);
+                    _class.uploadMessage['color'] = 'red';
+                });
+            }
+        });
+    }
+
+    sendMMApiRequest(trial) {
+        const _class = this;
+        const url = environment.apiAddress;
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', url, true);
+        xhr.setRequestHeader('Content-type', 'application/json');
+        xhr.setRequestHeader('Authorization', environment.apiToken);
+        const content = JSON.stringify(trial, null, 2);
         xhr.send(content);
 
-        xhr.onreadystatechange = function () {
+        xhr.onreadystatechange = function() {
             if (xhr.readyState === 4) {
-                let response = JSON.parse(xhr.responseText);
-                console.log(xhr.responseText);
-                console.log(xhr.status);
-                if (xhr.status >= 200 && xhr.status < 299 ) {
-                    alert('Import Successful');
+                const response = JSON.parse(xhr.responseText);
+                if (xhr.status >= 200 && xhr.status < 299) {
+                    _class.uploadMessage['content'] = 'Imported ' + trial['protocol_no'] + ' Successfully';
+                    _class.uploadMessage['color'] = 'green';
                 } else {
-                    alert('Error importing');
+                    _class.uploadMessage['content'] = JSON.stringify(response);
+                    _class.uploadMessage['color'] = 'red';
                 }
             }
-        }
+        };
     }
 
     createTrialZipFile(idList: Array<string>, zipFolder: any, isAll?: boolean) {
@@ -273,5 +322,14 @@ export class ConverterComponent implements OnInit, AfterViewInit {
                 });
             });
         }
+    }
+
+    formatForMatchMiner(trial: object) {
+        _.forEach(trial['site_list']['site'], function (site){
+            site['site_status'] = site['recruitment_status'];
+            site['site_name'] = site['org_family'];
+            site['coordinating_center'] = site['org_name'];
+        });
+        trial['curate_source'] = 'curation_tool'
     }
 }

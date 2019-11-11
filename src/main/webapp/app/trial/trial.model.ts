@@ -7,7 +7,12 @@ export interface Trial {
     short_title: string;
     phase: string;
     summary: string;
+    sponsor: string;
     drug_list: object;
+    protocol_target_accrual: number;
+    site_list: object;
+    protocol_type: string;
+    age: string;
     principal_investigator: string;
     prior_treatment_requirement: Array<String>;
     status: string;

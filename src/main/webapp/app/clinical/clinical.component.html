@@ -10,7 +10,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-3">oncotree_primary_diagnosis:</div>
+            <div class="col-sm-3">Oncotree Primary Diagnosis:</div>
             <div class="col-sm-1">
                 <label for="no_oncotree_primary_diagnosis1">Not</label>
                 <input id="no_oncotree_primary_diagnosis1" class="notLabel" type="checkbox" [(ngModel)]="clinicalInput.no_oncotree_primary_diagnosis" />
@@ -43,13 +43,13 @@
     </div>
 </div>
 <ng-template #editPanel>
-    <span>-clinical:</span>
+    <span class="super-bold">Clinical:</span>
     <jhi-panel [type]="'delete,edit,relocate,copy'" [unit]="unit" [path]="path"></jhi-panel>
     <br/>
     <div [ngStyle]="getStyle()" *ngIf="operationPool['relocate'] !== true && operationPool['copy'] !== true && operationPool['currentPath'] === path; else panel">
         <div class="row ageNumericalMargin">
             <div class="col-sm-4">
-                <label>age_numerical:
+                <label>Age Numerical:
                     <span [ngStyle]="getMessageStyle()">{{ validationMessage }}</span>
                 </label>
             </div>
@@ -59,7 +59,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-4">oncotree_primary_diagnosis:</div>
+            <div class="col-sm-4">Oncotree Primary Diagnosis:</div>
             <div class="col-sm-1 editMargin">
                 <label for="no_oncotree_primary_diagnosis2">Not</label>
                 <input id="no_oncotree_primary_diagnosis2" class="notLabel" type="checkbox" [(ngModel)]="clinicalInput.no_oncotree_primary_diagnosis" />
@@ -93,23 +93,23 @@
     <ng-template #panel>
         <div [ngStyle]="getStyle()">
             <div class="row">
-                <div class="col-sm-4">
-                    <label>age_numerical:</label>
+                <div class="col-sm-3 bolder">
+                    <label>Age Numerical:</label>
                 </div>
                 <div class="col-sm-8">
                     <span>{{unit.clinical.age_numerical}}</span>
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-4">
-                    <label>oncotree_primary_diagnosis:</label>
+                <div class="col-sm-3 bolder">
+                    <label>Oncotree Primary Diagnosis:</label>
                 </div>
                 <div class="col-sm-8">
                     <span>{{getDisplayContent('oncotree_primary_diagnosis')}}</span>
                 </div>
             </div>
             <div *ngIf="unit.clinical.gender" class="row">
-                <div class="col-sm-4">
+                <div class="col-sm-3 bolder">
                     <label>gender:</label>
                 </div>
                 <div class="col-sm-8">

@@ -1,7 +1,7 @@
 <div *ngIf="type === 'add'; else editPanel">
     <div>
         <div class="row borderMargin">
-            <div class="col-sm-3">hugo_symbol:
+            <div class="col-sm-3">Hugo Symbol:
                 <span [ngStyle]="getMessageStyle('gene')">{{ validationMessage['gene'] }}</span>
             </div>
             <div class="col-sm-1">
@@ -13,7 +13,7 @@
             </div>
         </div>
         <div class="row borderMargin">
-            <div class="col-sm-3">annotated_variant:</div>
+            <div class="col-sm-3">Annotated Variant:</div>
             <div class="col-sm-1">
                 <label for="no_annotated_variant1">Not</label>
                 <input id="no_annotated_variant1" type="checkbox" class="notLabel" [(ngModel)]="genomicInput.no_annotated_variant" />
@@ -23,7 +23,7 @@
             </div>
         </div>
         <div class="row borderMargin">
-            <div class="col-sm-4">matching_examples:
+            <div class="col-sm-4">Matching Examples:
                 <span [ngStyle]="getMessageStyle('example')">{{ validationMessage['example'] }}</span>
             </div>
             <div class="col-sm-8">
@@ -31,7 +31,7 @@
             </div>
         </div>
         <div class="row borderMargin">
-            <div class="col-sm-4">germline:</div>
+            <div class="col-sm-4">Germline:</div>
             <div class="col-sm-8">
                 <span id="germline1">
                     <label for="germline1-true">
@@ -45,7 +45,7 @@
         </div>
         <div *ngIf="!oncokb">
             <div class="row borderMargin">
-                <div class="col-sm-3">variant_category:</div>
+                <div class="col-sm-3">Variant Category:</div>
                 <div class="col-sm-1">
                     <label for="no_variant_category1">Not</label>
                     <input id="no_variant_category1" type="checkbox" class="notLabel" [(ngModel)]="genomicInput.no_variant_category" />
@@ -57,7 +57,7 @@
                 </div>
             </div>
             <div class="row borderMargin">
-                <div class="col-sm-3">protein_change:</div>
+                <div class="col-sm-3">Protein Change:</div>
                 <div class="col-sm-1">
                     <label for="no_protein_change1">Not</label>
                     <input id="no_protein_change1" type="checkbox" class="notLabel" [(ngModel)]="genomicInput.no_protein_change" />
@@ -67,7 +67,7 @@
                 </div>
             </div>
             <div class="row borderMargin">
-                <div class="col-sm-3">wildcard_protein_change:</div>
+                <div class="col-sm-3">Wildcard Protein Change:</div>
                 <div class="col-sm-1">
                     <label for="no_wildcard_protein_change1">Not</label>
                     <input id="no_wildcard_protein_change1" type="checkbox" class="notLabel" [(ngModel)]="genomicInput.no_wildcard_protein_change"
@@ -78,7 +78,7 @@
                 </div>
             </div>
             <div class="row borderMargin">
-                <div class="col-sm-3">variant_classification:</div>
+                <div class="col-sm-3">Variant Classification:</div>
                 <div class="col-sm-1">
                     <label for="no_variant_classification1">Not</label>
                     <input id="no_variant_classification1" type="checkbox" class="notLabel" [(ngModel)]="genomicInput.no_variant_classification"
@@ -91,7 +91,7 @@
                 </div>
             </div>
             <div class="row borderMargin">
-                <div class="col-sm-3">exon:</div>
+                <div class="col-sm-3">Exon:</div>
                 <div class="col-sm-1">
                     <label for="no_exon1">Not</label>
                     <input id="no_exon1" type="checkbox" class="notLabel" [(ngModel)]="genomicInput.no_exon" />
@@ -101,7 +101,7 @@
                 </div>
             </div>
             <div class="row borderMargin">
-                <div class="col-sm-3">cnv_call:</div>
+                <div class="col-sm-3">CNV Call:</div>
                 <div class="col-sm-1">
                     <label for="no_cnv_call1">Not</label>
                     <input id="no_cnv_call1" type="checkbox" class="notLabel" [(ngModel)]="genomicInput.no_cnv_call" />
@@ -111,7 +111,7 @@
                 </div>
             </div>
             <div class="row borderMargin">
-                <div class="col-sm-4">wildtype:</div>
+                <div class="col-sm-4">Wildtype:</div>
                 <div class="col-sm-8">
                     <span id="wildtype">
                         <label for="wildtype-true">
@@ -123,9 +123,11 @@
                     </span>
                 </div>
             </div>
-            <div *ngIf="false">
+
+
+            <!--TODO fix this -->
                 <div class="row borderMargin">
-                    <div class="col-sm-3">ms_status:</div>
+                    <div class="col-sm-3">MS Status:</div>
                     <div class="col-sm-1">
                         <label for="no_ms_status1">Not</label>
                         <input id="no_ms_status1" type="checkbox" class="notLabel" [(ngModel)]="genomicInput.no_ms_status"/>
@@ -135,7 +137,7 @@
                     </div>
                 </div>
                 <div class="row borderMargin">
-                    <div class="col-sm-3">mmr_status:</div>
+                    <div class="col-sm-3">MMR Status:</div>
                     <div class="col-sm-1">
                         <label for="no_mmr_status1">Not</label>
                         <input id="no_mmr_status1" type="checkbox" class="notLabel" [(ngModel)]="genomicInput.no_mmr_status"/>
@@ -145,28 +147,27 @@
                     </div>
                 </div>
                 <div class="row borderMargin">
-                    <div class="col-sm-4">fusion_partner_hugo_symbol:</div>
+                    <div class="col-sm-4">Fusion Partner Hugo Symbol:</div>
                     <div class="col-sm-8">
                         <input type="text" size="36" [(ngModel)]="genomicInput.fusion_partner_hugo_symbol"/>
                     </div>
                 </div>
-                <div class="row borderMargin">
-                    <div class="col-sm-4">display_name:</div>
-                    <div class="col-sm-8">
-                        <input type="text" size="36" [(ngModel)]="genomicInput.display_name"/>
-                    </div>
-                </div>
-            </div>
+                <!--<div class="row borderMargin">-->
+                    <!--<div class="col-sm-4">display_name:</div>-->
+                    <!--<div class="col-sm-8">-->
+                        <!--<input type="text" size="36" [(ngModel)]="genomicInput.display_name"/>-->
+                    <!--</div>-->
+                <!--</div>-->
         </div>
     </div>
 </div>
 <ng-template #editPanel>
-    <span>-genomic:</span>
+    <span class="super-bold">Genomic:</span>
     <jhi-panel [type]="'delete,edit,relocate,copy'" [unit]="unit" [path]="path"></jhi-panel>
     <br/>
     <div [ngStyle]="getStyle()" *ngIf="operationPool['relocate'] !== true && operationPool['copy'] !== true && operationPool['currentPath'] === path; else panel">
         <div class="row borderMargin">
-            <div class="col-sm-3">hugo_symbol:
+            <div class="col-sm-3">Hugo Symbol:
                 <span [ngStyle]="getMessageStyle('gene')">{{ validationMessage['gene'] }}</span>
             </div>
             <div class="col-sm-1">
@@ -178,7 +179,7 @@
             </div>
         </div>
         <div class="row borderMargin">
-            <div class="col-sm-3">annotated_variant:</div>
+            <div class="col-sm-3">Annotated Variant:</div>
             <div class="col-sm-1">
                 <label for="no_annotated_variant2">Not</label>
                 <input id="no_annotated_variant2" type="checkbox" class="notLabel" [(ngModel)]="genomicInput.no_annotated_variant" />
@@ -188,7 +189,7 @@
             </div>
         </div>
         <div class="row borderMargin">
-            <div class="col-sm-4">matching_examples:
+            <div class="col-sm-4">Matching Examples:
                 <span [ngStyle]="getMessageStyle('example')">{{ validationMessage['example'] }}</span>
             </div>
             <div class="col-sm-8">
@@ -196,7 +197,7 @@
             </div>
         </div>
         <div class="row borderMargin">
-            <div class="col-sm-4">germline:</div>
+            <div class="col-sm-4">Germline:</div>
             <div class="col-sm-8">
                 <span id="germline2">
                     <label for="germline2-true">
@@ -210,7 +211,7 @@
         </div>
         <div *ngIf="!oncokb">
             <div class="row borderMargin">
-                <div class="col-sm-3">variant_category:</div>
+                <div class="col-sm-3">Variant Category:</div>
                 <div class="col-sm-1">
                     <label for="no_variant_category2">Not</label>
                     <input id="no_variant_category2" type="checkbox" class="notLabel" [(ngModel)]="genomicInput.no_variant_category" />
@@ -222,7 +223,7 @@
                 </div>
             </div>
             <div class="row borderMargin">
-                <div class="col-sm-3">protein_change:</div>
+                <div class="col-sm-3">Protein Change:</div>
                 <div class="col-sm-1">
                     <label for="no_protein_change2">Not</label>
                     <input id="no_protein_change2" type="checkbox" class="notLabel" [(ngModel)]="genomicInput.no_protein_change" />
@@ -232,7 +233,7 @@
                 </div>
             </div>
             <div class="row borderMargin">
-                <div class="col-sm-3">wildcard_protein_change:</div>
+                <div class="col-sm-3">Wildcard Protein Change:</div>
                 <div class="col-sm-1">
                     <label for="no_wildcard_protein_change2">Not</label>
                     <input id="no_wildcard_protein_change2" type="checkbox" class="notLabel" [(ngModel)]="genomicInput.no_wildcard_protein_change" />
@@ -242,7 +243,7 @@
                 </div>
             </div>
             <div class="row borderMargin">
-                <div class="col-sm-3">variant_classification:</div>
+                <div class="col-sm-3">Variant Classification:</div>
                 <div class="col-sm-1">
                     <label for="no_variant_classification2">Not</label>
                     <input id="no_variant_classification2" type="checkbox" class="notLabel" [(ngModel)]="genomicInput.no_variant_classification" />
@@ -254,7 +255,7 @@
                 </div>
             </div>
             <div class="row borderMargin">
-                <div class="col-sm-3">exon:</div>
+                <div class="col-sm-3">Exon:</div>
                 <div class="col-sm-1">
                     <label for="no_exon2">Not</label>
                     <input id="no_exon2" type="checkbox" class="notLabel" [(ngModel)]="genomicInput.no_exon" />
@@ -264,7 +265,7 @@
                 </div>
             </div>
             <div class="row borderMargin">
-                <div class="col-sm-3">cnv_call:</div>
+                <div class="col-sm-3">CNV Call:</div>
                 <div class="col-sm-1">
                     <label for="no_cnv_call2">Not</label>
                     <input id="no_cnv_call2" type="checkbox" class="notLabel" [(ngModel)]="genomicInput.no_cnv_call" />
@@ -274,7 +275,7 @@
                 </div>
             </div>
             <div class="row borderMargin">
-                <div class="col-sm-4">wildtype:</div>
+                <div class="col-sm-4">Wildtype:</div>
                 <div class="col-sm-8">
                     <span id="wildtype">
                         <label for="wildtype-true">
@@ -286,55 +287,53 @@
                     </span>
                 </div>
             </div>
-            <div *ngIf="false">
-                <div class="row borderMargin">
-                    <div class="col-sm-3">ms_status:</div>
-                    <div class="col-sm-1">
-                        <label for="no_ms_status2">Not</label>
-                        <input id="no_ms_status2" type="checkbox" class="notLabel" [(ngModel)]="genomicInput.no_ms_status"/>
-                    </div>
-                    <div class="col-sm-8">
-                        <input [(ngModel)]="genomicInput.ms_status" size="36" />
-                    </div>
+            <div class="row borderMargin">
+                <div class="col-sm-3">MS Status:</div>
+                <div class="col-sm-1">
+                    <label for="no_ms_status2">Not</label>
+                    <input id="no_ms_status2" type="checkbox" class="notLabel" [(ngModel)]="genomicInput.no_ms_status"/>
                 </div>
-                <div class="row borderMargin">
-                    <div class="col-sm-3">mmr_status:</div>
-                    <div class="col-sm-1">
-                        <label for="no_mmr_status2">Not</label>
-                        <input id="no_mmr_status2" type="checkbox" class="notLabel" [(ngModel)]="genomicInput.no_mmr_status"/>
-                    </div>
-                    <div class="col-sm-8">
-                        <input [(ngModel)]="genomicInput.mmr_status" size="36" />
-                    </div>
-                </div>
-                <div class="row borderMargin">
-                    <div class="col-sm-4">fusion_partner_hugo_symbol:</div>
-                    <div class="col-sm-8">
-                        <input [(ngModel)]="genomicInput.fusion_partner_hugo_symbol" size="36" />
-                    </div>
-                </div>
-                <div class="row borderMargin">
-                    <div class="col-sm-4">display_name:</div>
-                    <div class="col-sm-8">
-                        <input [(ngModel)]="genomicInput.display_name" size="36" />
-                    </div>
+                <div class="col-sm-8">
+                    <input [(ngModel)]="genomicInput.ms_status" size="36" />
                 </div>
             </div>
+            <div class="row borderMargin">
+                <div class="col-sm-3">MMR Status:</div>
+                <div class="col-sm-1">
+                    <label for="no_mmr_status2">Not</label>
+                    <input id="no_mmr_status2" type="checkbox" class="notLabel" [(ngModel)]="genomicInput.no_mmr_status"/>
+                </div>
+                <div class="col-sm-8">
+                    <input [(ngModel)]="genomicInput.mmr_status" size="36" />
+                </div>
+            </div>
+            <div class="row borderMargin">
+                <div class="col-sm-4">Fusion Partner Hugo Symbol:</div>
+                <div class="col-sm-8">
+                    <input [(ngModel)]="genomicInput.fusion_partner_hugo_symbol" size="36" />
+                </div>
+            </div>
+            <!--<div class="row borderMargin">-->
+                <!--<div class="col-sm-4">display_name:</div>-->
+                <!--<div class="col-sm-8">-->
+                    <!--<input [(ngModel)]="genomicInput.display_name" size="36" />-->
+                <!--</div>-->
+            <!--</div>-->
         </div>
     </div>
     <ng-template #panel>
         <div [ngStyle]="getStyle()">
             <div class="row">
-                <div class="col-sm-4">
-                    <label>hugo_symbol: </label>
+                <div class="col-sm-3 bolder">
+                    <label>Hugo Symbol: </label>
                 </div>
                 <div class="col-sm-8">
                     <span>{{getDisplayContent('hugo_symbol')}}</span>
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-4">
-                    <label>annotated_variant: </label>
+                <div class="col-sm-3 bolder">
+                    <label>Annotated Variant: </label>
                 </div>
                 <div class="col-sm-8">
                     <span>{{getDisplayContent('annotated_variant')}}</span>
@@ -342,8 +341,8 @@
             </div>
             <div *ngIf="unit.genomic.matching_examples">
                 <div class="row">
-                    <div class="col-sm-4">
-                        <label>matching_examples: </label>
+                    <div class="col-sm-3 bolder">
+                        <label>Matching Examples: </label>
                     </div>
                     <div class="col-sm-8">
                         <span>{{unit.genomic.matching_examples}}</span>
@@ -352,8 +351,8 @@
             </div>
             <div *ngIf="unit.genomic.germline">
                 <div class="row">
-                    <div class="col-sm-4">
-                        <label>germline: </label>
+                    <div class="col-sm-3 bolder">
+                        <label>Germline: </label>
                     </div>
                     <div class="col-sm-8">
                         <span>{{unit.genomic.germline}}</span>
@@ -363,8 +362,8 @@
             <div *ngIf="!oncokb">
                 <div *ngIf="unit.genomic.variant_category">
                     <div class="row">
-                        <div class="col-sm-4">
-                            <label>variant_category: </label>
+                        <div class="col-sm-3 bolder">
+                            <label>Variant Category: </label>
                         </div>
                         <div class="col-sm-8">
                             <span>{{getDisplayContent('variant_category')}}</span>
@@ -373,8 +372,8 @@
                 </div>
                 <div *ngIf="unit.genomic.protein_change">
                     <div class="row">
-                        <div class="col-sm-4">
-                            <label>protein_change: </label>
+                        <div class="col-sm-3 bolder">
+                            <label>Protein Change: </label>
                         </div>
                         <div class="col-sm-8">
                             <span>{{getDisplayContent('protein_change')}}</span>
@@ -383,8 +382,8 @@
                 </div>
                 <div *ngIf="unit.genomic.wildcard_protein_change">
                     <div class="row">
-                        <div class="col-sm-4">
-                            <label>wildcard_protein_change: </label>
+                        <div class="col-sm-3 bolder">
+                            <label>Wildcard Protein Change: </label>
                         </div>
                         <div class="col-sm-8">
                             <span>{{getDisplayContent('wildcard_protein_change')}}</span>
@@ -393,8 +392,8 @@
                 </div>
                 <div *ngIf="unit.genomic.variant_classification">
                     <div class="row">
-                        <div class="col-sm-4">
-                            <label>variant_classification: </label>
+                        <div class="col-sm-3 bolder">
+                            <label>Variant Classification: </label>
                         </div>
                         <div class="col-sm-8">
                             <span>{{getDisplayContent('variant_classification')}}</span>
@@ -403,8 +402,8 @@
                 </div>
                 <div *ngIf="unit.genomic.exon">
                     <div class="row">
-                        <div class="col-sm-4">
-                            <label>exon: </label>
+                        <div class="col-sm-3 bolder">
+                            <label>Exon: </label>
                         </div>
                         <div class="col-sm-8">
                             <span>{{getDisplayContent('exon')}}</span>
@@ -413,8 +412,8 @@
                 </div>
                 <div *ngIf="unit.genomic.cnv_call">
                     <div class="row">
-                        <div class="col-sm-4">
-                            <label>cnv_call: </label>
+                        <div class="col-sm-3 bolder">
+                            <label>CNV Call: </label>
                         </div>
                         <div class="col-sm-8">
                             <span>{{getDisplayContent('cnv_call')}}</span>
@@ -423,19 +422,19 @@
                 </div>
                 <div *ngIf="unit.genomic.wildtype">
                     <div class="row">
-                        <div class="col-sm-4">
-                            <label>wildtype: </label>
+                        <div class="col-sm-3 bolder">
+                            <label>Wildtype: </label>
                         </div>
                         <div class="col-sm-8">
                             <span>{{unit.genomic.wildtype}}</span>
                         </div>
                     </div>
                 </div>
-                <div *ngIf="false">
-                    <div *ngIf="unit.genomic.ms_status">
+
+                <div *ngIf="unit.genomic.ms_status">
                         <div class="row">
-                            <div class="col-sm-4">
-                                <label>ms_status: </label>
+                            <div class="col-sm-3 bolder">
+                                <label>MS Status: </label>
                             </div>
                             <div class="col-sm-8">
                                 <span>{{getDisplayContent('ms_status')}}</span>
@@ -444,8 +443,8 @@
                     </div>
                     <div *ngIf="unit.genomic.mmr_status">
                         <div class="row">
-                            <div class="col-sm-4">
-                                <label>mmr_status: </label>
+                            <div class="col-sm-3 bolder">
+                                <label>MMR Status: </label>
                             </div>
                             <div class="col-sm-8">
                                 <span>{{getDisplayContent('mmr_status')}}</span>
@@ -454,26 +453,25 @@
                     </div>
                     <div *ngIf="unit.genomic.fusion_partner_hugo_symbol">
                         <div class="row">
-                            <div class="col-sm-4">
-                                <label>fusion_partner_hugo_symbol: </label>
+                            <div class="col-sm-3 bolder">
+                                <label>Fusion Partner Hugo Symbol: </label>
                             </div>
                             <div class="col-sm-8">
                                 <span>{{getDisplayContent('fusion_partner_hugo_symbol')}}</span>
                             </div>
                         </div>
                     </div>
-                    <div *ngIf="unit.genomic.display_name">
-                        <div class="row">
-                            <div class="col-sm-4">
-                                <label>display_name: </label>
-                            </div>
-                            <div class="col-sm-8">
-                                <span>{{getDisplayContent('display_name')}}</span>
-                            </div>
-                        </div>
-                    </div>
+                    <!--<div *ngIf="unit.genomic.display_name">-->
+                        <!--<div class="row">-->
+                            <!--<div class="col-sm-3">-->
+                                <!--<label>display_name: </label>-->
+                            <!--</div>-->
+                            <!--<div class="col-sm-8">-->
+                                <!--<span>{{getDisplayContent('display_name')}}</span>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
                 </div>
-            </div>
         </div>
     </ng-template>
 </ng-template>
