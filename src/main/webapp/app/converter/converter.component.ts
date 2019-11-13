@@ -139,21 +139,22 @@ export class ConverterComponent implements OnInit, AfterViewInit {
         let headers = new HttpHeaders({
             'Content-Type': 'application/json',
             'Authorization': environment.apiToken,
+            'Cache-Control': 'no-cache'
         });
         const _class = this;
         this.removeAttributes(trial);
         this.formatForMatchMiner(trial);
 
-        let url = environment.apiAddress + '/?where=' + encodeURIComponent('{"nct_id":' + '"' + trial['nct_id'] + '"' + '}');
+        let url = environment.apiAddress + '?where=%22nct_id%22==%22'+ trial['nct_id'] +'%22';
         let mm_api_trial = this.http.get(url).toPromise();
         mm_api_trial.then(res => {
             if (res['_items'].length == 0) {
                 let re = this.http.post(environment.apiAddress, JSON.stringify(trial), {headers: headers}).toPromise();
                 re.then(res => {
-                    _class.uploadMessage['content'] += 'Imported Successfully ' + trial['protocol_no'] + '\n';
+                    _class.uploadMessage['content'] += 'Imported Successfully ' + trial['nct_id'] + ' (' + trial['protocol_no'] + ')\n';
                     _class.uploadMessage['color'] = 'green';
                 }).catch(res => {
-                    _class.uploadMessage['content'] += 'Error importing' + trial['protocol_no'] + '\n';
+                    _class.uploadMessage['content'] += 'Error importing ' + trial['nct_id'] + ' (' + trial['protocol_no'] + ')\n';
                     _class.uploadMessage['color'] = 'red';
                     console.log(res)
                 });
@@ -163,10 +164,10 @@ export class ConverterComponent implements OnInit, AfterViewInit {
                 headers = headers.append('If-Match', api_trial['_etag']);
                 let patch_re = this.http.put(patch_url, JSON.stringify(trial), {headers: headers}).toPromise();
                 patch_re.then(res => {
-                    _class.uploadMessage['content'] += 'Imported Successfully ' + trial['protocol_no'] + '\n';
+                    _class.uploadMessage['content'] += 'Imported Successfully ' + trial['nct_id'] + ' (' + trial['protocol_no'] + ')\n';
                     _class.uploadMessage['color'] = 'green';
                 }).catch(res => {
-                    _class.uploadMessage['content'] += 'Error importing' + trial['protocol_no'] + '\n';
+                    _class.uploadMessage['content'] += 'Error importing ' + trial['nct_id'] + ' (' + trial['protocol_no'] + ')\n';
                     _class.uploadMessage['color'] = 'red';
                     console.log(res)
                 });
