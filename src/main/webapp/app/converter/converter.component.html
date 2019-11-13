@@ -38,7 +38,7 @@
         </div>
         <br />
         <br />
-        <div class="row">
+        <div class="row" *ngIf="mmIntegration">
             <div class="col-md-5"></div>
             <div class="col-md-7">
                 <button class="btn btn-primary button-margin" (click)="importIntoMatchMiner(true)">Import All Into MatchMiner</button>

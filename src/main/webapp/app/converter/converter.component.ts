@@ -37,6 +37,7 @@ export class ConverterComponent implements OnInit, AfterViewInit {
         color: ''
     };
     tableDestroied = false;
+    mmIntegration = environment.apiAddress ? environment.apiAddress : false;
 
     constructor(private trialService: TrialService, private http: HttpClient) {
         this.trialService.trialListObs.subscribe((message) => {
