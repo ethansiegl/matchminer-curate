@@ -37,6 +37,7 @@ export class ConverterComponent implements OnInit, AfterViewInit {
         color: ''
     };
     tableDestroied = false;
+    mmIntegration = environment.apiAddress ? environment.apiAddress : false;
 
     constructor(private trialService: TrialService, private http: HttpClient) {
         this.trialService.trialListObs.subscribe((message) => {
@@ -118,6 +119,8 @@ export class ConverterComponent implements OnInit, AfterViewInit {
         let to_download = [];
         const download_list = this.downloadIdList;
         const trial_list = this.trialList;
+        const _class = this;
+
         if (isAll) {
             to_download = trial_list;
         } else {
@@ -125,91 +128,51 @@ export class ConverterComponent implements OnInit, AfterViewInit {
                 if (download_list.includes(trial['nct_id']) === true) {
                     to_download.push(trial);
                 }
-            }, this);
+            });
         }
-        const _class = this;
         _.forEach(to_download, function(trial) {
             _class.importSingleTrial(trial);
         }, this);
     }
 
     importSingleTrial(trial: object) {
+        let headers = new HttpHeaders({
+            'Content-Type': 'application/json',
+            'Authorization': environment.apiToken,
+            'Cache-Control': 'no-cache'
+        });
         const _class = this;
         this.removeAttributes(trial);
         this.formatForMatchMiner(trial);
 
-        //
-        // let mm_api_trial = this.http.get(url);
-        // mm_api_trial.subscribe(res => {
-        //     if (res['_items'].length > 0) {
-        //         //To issue PUT, python-eve API requires etag to be present
-        //         trial['_etag'] = res['_items'][0]._etag;
-        //         let trial_put = this.http.put(url, trial, { headers: headers }).toPromise();
-        //         trial_put.then(res => {
-        //             _class.uploadMessage['content'] = 'Imported Successfully';
-        //             _class.uploadMessage['color'] = 'green';
-        //         }).catch(res => {
-        //             _class.uploadMessage['content'] = JSON.stringify(res);
-        //             _class.uploadMessage['color'] = 'red';
-        //         })
-        //     } else {
-        //         let trial_post = this.http.post(url, trial, { headers: headers }).toPromise();
-        //         trial_post.then(res => {
-        //             _class.uploadMessage['content'] = 'Imported Successfully';
-        //             _class.uploadMessage['color'] = 'green';
-        //         }).catch(res => {
-        //             _class.uploadMessage['content'] = JSON.stringify(res);
-        //             _class.uploadMessage['color'] = 'red';
-        //         })
-        //     }
-        // });
-
-        let url = environment.apiAddress + '?where={"nct_id":' + '"' + trial['nct_id'] + '"' + '}';
-        let mm_api_trial = this.http.get(url);
-        mm_api_trial.subscribe(res => {
+        let url = environment.apiAddress + '?where=%22nct_id%22==%22'+ trial['nct_id'] +'%22';
+        let mm_api_trial = this.http.get(url).toPromise();
+        mm_api_trial.then(res => {
             if (res['_items'].length == 0) {
-                this.sendMMApiRequest(trial);
+                let re = this.http.post(environment.apiAddress, JSON.stringify(trial), {headers: headers}).toPromise();
+                re.then(res => {
+                    _class.uploadMessage['content'] += 'Imported Successfully ' + trial['nct_id'] + ' (' + trial['protocol_no'] + ')\n';
+                    _class.uploadMessage['color'] = 'green';
+                }).catch(res => {
+                    _class.uploadMessage['content'] += 'Error importing ' + trial['nct_id'] + ' (' + trial['protocol_no'] + ')\n';
+                    _class.uploadMessage['color'] = 'red';
+                    console.log(res)
+                });
             } else {
                 let api_trial = res['_items'][0];
-                let headers = new HttpHeaders({
-                    'Content-Type': 'application/json',
-                    'Authorization': environment.apiToken,
-                    'If-Match': api_trial['_etag']
-                });
-                //TODO send a PATCH request instead
-                let dele = this.http.delete(environment.apiAddress + '/' + api_trial['_id'], {headers: headers}).toPromise();
-                dele.then(res => {
-                    this.sendMMApiRequest(trial);
-                }).catch(res => {
-                    _class.uploadMessage['content'] = JSON.stringify(res);
-                    _class.uploadMessage['color'] = 'red';
-                });
-            }
-        });
-    }
-
-    sendMMApiRequest(trial) {
-        const _class = this;
-        const url = environment.apiAddress;
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', url, true);
-        xhr.setRequestHeader('Content-type', 'application/json');
-        xhr.setRequestHeader('Authorization', environment.apiToken);
-        const content = JSON.stringify(trial, null, 2);
-        xhr.send(content);
-
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4) {
-                const response = JSON.parse(xhr.responseText);
-                if (xhr.status >= 200 && xhr.status < 299) {
-                    _class.uploadMessage['content'] = 'Imported ' + trial['protocol_no'] + ' Successfully';
+                let patch_url = environment.apiAddress + '/' + api_trial['_id'];
+                headers = headers.append('If-Match', api_trial['_etag']);
+                let patch_re = this.http.put(patch_url, JSON.stringify(trial), {headers: headers}).toPromise();
+                patch_re.then(res => {
+                    _class.uploadMessage['content'] += 'Imported Successfully ' + trial['nct_id'] + ' (' + trial['protocol_no'] + ')\n';
                     _class.uploadMessage['color'] = 'green';
-                } else {
-                    _class.uploadMessage['content'] = JSON.stringify(response);
+                }).catch(res => {
+                    _class.uploadMessage['content'] += 'Error importing ' + trial['nct_id'] + ' (' + trial['protocol_no'] + ')\n';
                     _class.uploadMessage['color'] = 'red';
-                }
+                    console.log(res)
+                });
             }
-        };
+        })
     }
 
     createTrialZipFile(idList: Array<string>, zipFolder: any, isAll?: boolean) {
