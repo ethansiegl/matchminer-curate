@@ -43,7 +43,7 @@ export class PanelComponent implements OnInit {
     clinicalInput: Clinical;
     clinicalFields = ['age_numerical', 'oncotree_primary_diagnosis'];
     genomicFields = ['hugo_symbol', 'annotated_variant', 'matching_examples', 'germline', 'protein_change', 'wildcard_protein_change',
-    'variant_classification', 'variant_category', 'exon', 'cnv_call', 'wildtype', 'ms_status', 'mmr_status'];
+    'variant_classification', 'variant_category', 'exon', 'cnv_call', 'wildtype', 'ms_status', 'mmr_status', 'fusion_partner_hugo_symbol'];
     oncokbGenomicFields = ['hugo_symbol', 'annotated_variant', 'germline'];
     oncokb: boolean;
     hasErrorInputField: boolean;

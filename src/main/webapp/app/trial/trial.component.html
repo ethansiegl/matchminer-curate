@@ -1,6 +1,6 @@
 <div class="container trial-container">
     <div class="input-group">
-        <input type="text" class="form-control" [(ngModel)]="trialsToImport" placeholder="Enter trial in the format: NCT02057133 or 14-085"
+        <input type="text" class="form-control" [(ngModel)]="trialsToImport" placeholder="Enter trial in the format: NCT02057133"
             size="100">
         <span class="input-group-btn">
             <button class="btn btn-primary" [disabled]="!trialsToImport" (click)="importTrials()">Import New Trials</button>
@@ -113,22 +113,23 @@
             <br/>
             <label for="treatmentList">Treatment List:</label>
             <div id="treatmentList">
-                <span>-arm: <jhi-panel [type]="'add,copyArm'" [arm]="true" [path]="'arms'"></jhi-panel></span>
+                <span class="super-bold">Arm: <jhi-panel [type]="'add,copyArm'" [arm]="true" [path]="'arms'"></jhi-panel></span>
                 <br/>
                 <div *ngFor="let arm of trialChosen.treatment_list.step[0].arm; let i = index">
                     <jhi-arm [type]="'delete,edit'" [unit]="arm" [path]="'arm_description,'+i"></jhi-arm>
-                    <span class="matchTitle2">-match </span>
+                    <span class="matchTitle2 super-bold">Match </span>
                     <jhi-panel [type]="'add,destination,copyMatch'" [path]="'arm,'+i"></jhi-panel>
                     <div class="indent2 levelIndicator">
                         <jhi-match [match]="arm.match" [path]="'arm,'+i"></jhi-match>
                     </div>
                     <br/>
                 </div>
-                <span class="matchTitle1">-match </span>
+                <span class="matchTitle1 super-bold">Match </span>
                 <jhi-panel [type]="'add,destination,copyMatch'" [path]="'match'"></jhi-panel>
                 <div class="indent1 levelIndicator">
                     <jhi-match [match]="trialChosen.treatment_list.step[0].match" [path]="'match'"></jhi-match>
                 </div>
+
                 <div class="note-margin">
                     <p class="note-p-margin">
                         <label>Additional Information (Optional):</label>
@@ -154,7 +155,7 @@
                     <p>Click (<i class="fa fa-clone noteCopy" aria-hidden="true"></i>) to copy this section; click again to cancel.
                         Click (<i class="fa fa-clone noteDestination" aria-hidden="true"></i>) to use as your destination.</p>
 
-                    <p>Use comma(,) to separate a list of annotated_variants(i.e. "V600E, V600K") and age_numerical range(i.e. ">=12, &lt;=18").</p>
+                    <p>Use comma(,) to separate a list of annotated variants(i.e. "V600E, V600K") and age_numerical range(i.e. ">=12, &lt;=18").</p>
                 </div>
             </div>
         </div>

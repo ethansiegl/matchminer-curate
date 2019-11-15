@@ -152,31 +152,53 @@ export class TrialComponent implements OnInit, AfterViewInit {
         this.connectionService.importTrials( nctId ).subscribe( ( res ) => {
             const trialInfo = res;
             const armsInfo: any = [];
-            _.forEach( trialInfo[ 'arms' ], function( arm ) {
-                if ( arm.arm_description !== null ) {
-                    armsInfo.push( {
+            _.forEach(trialInfo['arms'], function(arm) {
+                if (arm.arm_description !== null) {
+                    armsInfo.push({
                         arm_description: arm.arm_name,
                         arm_info: arm.arm_description,
                         match: []
-                    } );
+                    });
                 }
-            } );
+            });
             const trial: Trial = {
                 curation_status: 'In progress',
                 archived: 'No',
                 protocol_no: protocolNo,
-                nct_id: trialInfo[ 'nct_id' ],
-                long_title: trialInfo[ 'official_title' ],
-                short_title: trialInfo[ 'brief_title' ],
-                phase: trialInfo[ 'phase' ][ 'phase' ],
-                status: trialInfo[ 'current_trial_status' ],
+                nct_id: trialInfo['nct_id'],
+                long_title: trialInfo['official_title'],
+                short_title: trialInfo['brief_title'],
+                phase: trialInfo['phase']['phase'],
+                status: trialInfo['current_trial_status'],
+                drug_list: {'drug': []},
+                age: '',
+                protocol_target_accrual: trialInfo['minimum_target_accrual_number'],
+                summary: trialInfo['brief_title'],
+                prior_treatment_requirement: [],
+                staff_list: {protocol_staff: [{}]},
+                sponsor: trialInfo['lead_org'],
+                principal_investigator: trialInfo['principal_investigator'],
+                site_list: {site: trialInfo['sites']},
+                protocol_type: trialInfo['primary_purpose']['primary_purpose_code'],
                 treatment_list: {
-                    step: [ {
+                    step: [{
                         arm: armsInfo,
                         match: []
-                    } ]
+                    }]
                 }
             };
+
+            const min_age = trialInfo['eligibility']['structured']['min_age'].match(/\d+/g).map(Number)[0];
+            const max_age = trialInfo['eligibility']['structured']['max_age'].match(/\d+/g).map(Number)[0];
+            if (min_age >= 18) {
+                trial['age'] = 'Adults';
+            } else if (max_age <= 18) {
+                trial['age'] = 'Children';
+            }
+            for (let elg of  trialInfo['eligibility']['unstructured']) {
+                trial.prior_treatment_requirement.push(elg.description);
+            }
+
             this.db.object( 'Trials/' + trialInfo[ 'nct_id' ] ).set( trial ).then( ( response ) => {
                 this.messages.push( 'Successfully imported ' + trialInfo[ 'nct_id' ] );
                 if (this.oncokb) {
@@ -203,6 +225,7 @@ export class TrialComponent implements OnInit, AfterViewInit {
             this.messages.push( nctId + ' not found' );
         } );
     }
+
     updateStatus( type: string ) {
         if ( type === 'curation' ) {
             this.db.object( 'Trials/' + this.nctIdChosen ).update( {

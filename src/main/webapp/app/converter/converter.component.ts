@@ -1,16 +1,18 @@
-import { Component, ViewChild, AfterViewInit, OnInit } from '@angular/core';
+import {Component, ViewChild, AfterViewInit, OnInit} from '@angular/core';
+import {HttpClient, HttpErrorResponse, HttpHandler, HttpHeaders} from '@angular/common/http';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/observable/combineLatest';
-import { TrialService } from '../service/trial.service';
+import {TrialService} from '../service/trial.service';
 import * as _ from 'lodash';
 import '../../../../../node_modules/jquery/dist/jquery.js';
 import '../../../../../node_modules/datatables.net/js/jquery.dataTables.js';
 import * as YAML from 'js-yaml';
-import { Subject } from 'rxjs/Subject';
-import { DataTableDirective } from 'angular-datatables';
-import { Trial } from '../trial/trial.model';
+import {Subject} from 'rxjs/Subject';
+import {DataTableDirective} from 'angular-datatables';
+import {Trial} from '../trial/trial.model';
 import * as JSZip from 'jszip';
 import * as FileSaver from 'file-saver';
+import {environment} from "../environments/environment";
 
 @Component({
     selector: 'jhi-converter',
@@ -28,23 +30,25 @@ export class ConverterComponent implements OnInit, AfterViewInit {
     dtTrigger: Subject<any> = new Subject();
     fileType = 'json';
     filesToUpload: Array<any> = [];
-    uploadFileNames= '';
+    uploadFileNames = '';
     uploadFailedFileList: Array<string> = [];
     uploadMessage: object = {
         content: '',
         color: ''
     };
     tableDestroied = false;
+    mmIntegration = environment.apiAddress ? environment.apiAddress : false;
 
-    constructor(private trialService: TrialService) {
+    constructor(private trialService: TrialService, private http: HttpClient) {
         this.trialService.trialListObs.subscribe((message) => {
             this.trialList = message;
-            this.nctIdList = _.map(this.trialList, function(trial){
+            this.nctIdList = _.map(this.trialList, function (trial) {
                 return trial.nct_id;
             });
             this.rerender();
         });
     }
+
     ngOnInit(): void {
         this.dtOptions = {
             paging: false,
@@ -55,20 +59,22 @@ export class ConverterComponent implements OnInit, AfterViewInit {
     ngAfterViewInit(): void {
         this.dtTrigger.next();
     }
+
     rerender(): void {
         this.tableDestroied = false;
         if (!_.isUndefined(this.dtElement)) {
             this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
                 // Destroy the table first
-                 if (!this.tableDestroied) {
-                     dtInstance.destroy();
-                     // Call the dtTrigger to rerender again
-                     this.dtTrigger.next();
-                     this.tableDestroied = true;
-                 }
+                if (!this.tableDestroied) {
+                    dtInstance.destroy();
+                    // Call the dtTrigger to rerender again
+                    this.dtTrigger.next();
+                    this.tableDestroied = true;
+                }
             });
         }
     }
+
     downloadSingleTrial(nctId: string, type: string) {
         this.trialService.fetchTrialById(nctId).then((trialJson) => {
             if (!_.isEmpty(trialJson)) {
@@ -88,6 +94,7 @@ export class ConverterComponent implements OnInit, AfterViewInit {
             }
         });
     }
+
     downloadTrials(isAll: boolean) {
         const zip = new JSZip();
         const folderName = 'Trials';
@@ -101,47 +108,109 @@ export class ConverterComponent implements OnInit, AfterViewInit {
         } else if (this.downloadIdList.length > 1) {
             this.createTrialZipFile(this.downloadIdList, zipFolder, false);
         }
-        zip.generateAsync({type: 'blob'}).then(function(content) {
+        zip.generateAsync({type: 'blob'}).then(function (content) {
             FileSaver.saveAs(content, folderName + '.zip');
-        }, function(err) {
+        }, function (err) {
             console.log(err);
         });
     }
+
+    importIntoMatchMiner(isAll: boolean) {
+        let to_download = [];
+        const download_list = this.downloadIdList;
+        const trial_list = this.trialList;
+        const _class = this;
+
+        if (isAll) {
+            to_download = trial_list;
+        } else {
+            _.forEach(trial_list, function(trial) {
+                if (download_list.includes(trial['nct_id']) === true) {
+                    to_download.push(trial);
+                }
+            });
+        }
+        _.forEach(to_download, function(trial) {
+            _class.importSingleTrial(trial);
+        }, this);
+    }
+
+    importSingleTrial(trial: object) {
+        let headers = new HttpHeaders({
+            'Content-Type': 'application/json',
+            'Authorization': environment.apiToken,
+            'Cache-Control': 'no-cache'
+        });
+        const _class = this;
+        this.removeAttributes(trial);
+        this.formatForMatchMiner(trial);
+
+        let url = environment.apiAddress + '?where=%22nct_id%22==%22'+ trial['nct_id'] +'%22';
+        let mm_api_trial = this.http.get(url).toPromise();
+        mm_api_trial.then(res => {
+            if (res['_items'].length == 0) {
+                let re = this.http.post(environment.apiAddress, JSON.stringify(trial), {headers: headers}).toPromise();
+                re.then(res => {
+                    _class.uploadMessage['content'] += 'Imported Successfully ' + trial['nct_id'] + ' (' + trial['protocol_no'] + ')\n';
+                    _class.uploadMessage['color'] = 'green';
+                }).catch(res => {
+                    _class.uploadMessage['content'] += 'Error importing ' + trial['nct_id'] + ' (' + trial['protocol_no'] + ')\n';
+                    _class.uploadMessage['color'] = 'red';
+                    console.log(res)
+                });
+            } else {
+                let api_trial = res['_items'][0];
+                let patch_url = environment.apiAddress + '/' + api_trial['_id'];
+                headers = headers.append('If-Match', api_trial['_etag']);
+                let patch_re = this.http.put(patch_url, JSON.stringify(trial), {headers: headers}).toPromise();
+                patch_re.then(res => {
+                    _class.uploadMessage['content'] += 'Imported Successfully ' + trial['nct_id'] + ' (' + trial['protocol_no'] + ')\n';
+                    _class.uploadMessage['color'] = 'green';
+                }).catch(res => {
+                    _class.uploadMessage['content'] += 'Error importing ' + trial['nct_id'] + ' (' + trial['protocol_no'] + ')\n';
+                    _class.uploadMessage['color'] = 'red';
+                    console.log(res)
+                });
+            }
+        })
+    }
+
     createTrialZipFile(idList: Array<string>, zipFolder: any, isAll?: boolean) {
         let content = '';
         if (isAll) {
-            _.forEach(this.trialList, function(trialJson){
+            _.forEach(this.trialList, function (trialJson) {
                 this.removeAttributes(trialJson);
                 const nctId = trialJson['nct_id'];
-                if ( this.fileType === 'json' ) {
-                    content = JSON.stringify( trialJson, null, 2 );
+                if (this.fileType === 'json') {
+                    content = JSON.stringify(trialJson, null, 2);
                 } else {
-                    content = YAML.safeDump( trialJson );
+                    content = YAML.safeDump(trialJson);
                 }
                 // create a folder and a file
-                zipFolder.file( nctId + '.' + this.fileType, content);
+                zipFolder.file(nctId + '.' + this.fileType, content);
             }, this);
         } else {
-            _.forEach(idList, function(nctId) {
-                _.forEach(this.trialList, function(trialJson){
+            _.forEach(idList, function (nctId) {
+                _.forEach(this.trialList, function (trialJson) {
                     if (nctId === trialJson['nct_id']) {
                         this.removeAttributes(trialJson);
-                        if ( this.fileType === 'json' ) {
-                            content = JSON.stringify( trialJson, null, 2 );
+                        if (this.fileType === 'json') {
+                            content = JSON.stringify(trialJson, null, 2);
                         } else {
-                            content = YAML.safeDump( trialJson );
+                            content = YAML.safeDump(trialJson);
                         }
                         // create a folder and a file
-                        zipFolder.file( nctId + '.' + this.fileType, content);
+                        zipFolder.file(nctId + '.' + this.fileType, content);
                     }
                 }, this);
             }, this);
         }
     }
+
     uploadFiles() {
         let result = true;
         this.uploadFailedFileList = [];
-        _.forEach(this.filesToUpload, function(file) {
+        _.forEach(this.filesToUpload, function (file) {
             const fileReader = new FileReader();
             fileReader.readAsText(file);
             fileReader.onload = (e) => {
@@ -179,18 +248,20 @@ export class ConverterComponent implements OnInit, AfterViewInit {
             };
         }, this);
     }
+
     fileChanged($event) {
         const fileArray = [];
         this.uploadMessage['content'] = '';
         this.uploadFileNames = '';
         this.filesToUpload = $event.target.files;
         if (this.filesToUpload.length > 1) {
-            _.forEach(this.filesToUpload, function(file) {
+            _.forEach(this.filesToUpload, function (file) {
                 fileArray.push(file.name);
             });
             this.uploadFileNames = fileArray.join(', ');
         }
     }
+
     getDownloadCheckbox(id: string, isChecked: boolean) {
         if (isChecked) {
             this.downloadIdList.push(id);
@@ -199,19 +270,29 @@ export class ConverterComponent implements OnInit, AfterViewInit {
             this.downloadIdList.splice(index, 1);
         }
     }
+
     removeAttributes(data: object) {
         // Remove attributes not in CTML.
         const removedFields = ['archived', 'curation_status'];
-        _.forEach(removedFields, function(item) {
+        _.forEach(removedFields, function (item) {
             delete data[item];
         });
         if (data['treatment_list']['step'][0]['arm'].length > 0) {
             const removedArmFields = ['arm_info', 'arm_eligibility'];
-            _.forEach(data['treatment_list']['step'][0]['arm'], function(arm) {
-                _.forEach(removedArmFields, function(item) {
+            _.forEach(data['treatment_list']['step'][0]['arm'], function (arm) {
+                _.forEach(removedArmFields, function (item) {
                     delete arm[item];
                 });
             });
         }
+    }
+
+    formatForMatchMiner(trial: object) {
+        _.forEach(trial['site_list']['site'], function (site){
+            site['site_status'] = site['recruitment_status'];
+            site['site_name'] = site['org_family'];
+            site['coordinating_center'] = site['org_name'];
+        });
+        trial['curate_source'] = 'curation_tool'
     }
 }
