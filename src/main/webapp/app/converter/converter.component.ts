@@ -176,31 +176,32 @@ export class ConverterComponent implements OnInit, AfterViewInit {
     }
 
     createTrialZipFile(idList: Array<string>, zipFolder: any, isAll?: boolean) {
+        let _class = this;
         let content = '';
         if (isAll) {
-            _.forEach(this.trialList, function (trialJson) {
-                this.removeAttributes(trialJson);
+            _.forEach(_class.trialList, function (trialJson) {
+                _class.removeAttributes(trialJson);
                 const nctId = trialJson['nct_id'];
-                if (this.fileType === 'json') {
+                if (_class.fileType === 'json') {
                     content = JSON.stringify(trialJson, null, 2);
                 } else {
                     content = YAML.safeDump(trialJson);
                 }
                 // create a folder and a file
-                zipFolder.file(nctId + '.' + this.fileType, content);
+                zipFolder.file(nctId + '.' + _class.fileType, content);
             }, this);
         } else {
             _.forEach(idList, function (nctId) {
-                _.forEach(this.trialList, function (trialJson) {
+                _.forEach(_class.trialList, function (trialJson) {
                     if (nctId === trialJson['nct_id']) {
-                        this.removeAttributes(trialJson);
-                        if (this.fileType === 'json') {
+                        _class.removeAttributes(trialJson);
+                        if (_class.fileType === 'json') {
                             content = JSON.stringify(trialJson, null, 2);
                         } else {
                             content = YAML.safeDump(trialJson);
                         }
                         // create a folder and a file
-                        zipFolder.file(nctId + '.' + this.fileType, content);
+                        zipFolder.file(nctId + '.' + _class.fileType, content);
                     }
                 }, this);
             }, this);
