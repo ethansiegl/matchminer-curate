@@ -40,6 +40,9 @@ required fields to `environments.ts`.
     projectId: "[PROJECT-ID]",
     storageBucket: "[PROJECT-ID].appspot.com",
     messagingSenderId: "[SENDER-ID]",
+    mmApiAddress: 'https://matchminer_api_address.org/api',
+    apiToken: 'Basic 123456789',
+    demo: false, // turning on disabled login to make demo'ing easier 
     ```
     
 For more information about setting up firebase - [Firebase Documentation](https://firebase.google.com/docs/web/setup)

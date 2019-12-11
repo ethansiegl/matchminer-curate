@@ -37,7 +37,7 @@ export class ConverterComponent implements OnInit, AfterViewInit {
         color: ''
     };
     tableDestroied = false;
-    mmIntegration = environment.apiAddress ? environment.apiAddress : false;
+    mmIntegration = environment.mmApiAddress ? environment.mmApiAddress : false;
 
     constructor(private trialService: TrialService, private http: HttpClient) {
         this.trialService.trialListObs.subscribe((message) => {
@@ -145,11 +145,11 @@ export class ConverterComponent implements OnInit, AfterViewInit {
         this.removeAttributes(trial);
         this.formatForMatchMiner(trial);
 
-        let url = environment.apiAddress + '?where=%22nct_id%22==%22'+ trial['nct_id'] +'%22';
+        let url = environment.mmApiAddress + '?where=%22nct_id%22==%22'+ trial['nct_id'] +'%22';
         let mm_api_trial = this.http.get(url).toPromise();
         mm_api_trial.then(res => {
             if (res['_items'].length == 0) {
-                let re = this.http.post(environment.apiAddress, JSON.stringify(trial), {headers: headers}).toPromise();
+                let re = this.http.post(environment.mmApiAddress, JSON.stringify(trial), {headers: headers}).toPromise();
                 re.then(res => {
                     _class.uploadMessage['content'] += 'Imported Successfully ' + trial['nct_id'] + ' (' + trial['protocol_no'] + ')\n';
                     _class.uploadMessage['color'] = 'green';
@@ -160,7 +160,7 @@ export class ConverterComponent implements OnInit, AfterViewInit {
                 });
             } else {
                 let api_trial = res['_items'][0];
-                let patch_url = environment.apiAddress + '/' + api_trial['_id'];
+                let patch_url = environment.mmApiAddress + '/' + api_trial['_id'];
                 headers = headers.append('If-Match', api_trial['_etag']);
                 let patch_re = this.http.put(patch_url, JSON.stringify(trial), {headers: headers}).toPromise();
                 patch_re.then(res => {
@@ -176,31 +176,32 @@ export class ConverterComponent implements OnInit, AfterViewInit {
     }
 
     createTrialZipFile(idList: Array<string>, zipFolder: any, isAll?: boolean) {
+        let _class = this;
         let content = '';
         if (isAll) {
-            _.forEach(this.trialList, function (trialJson) {
-                this.removeAttributes(trialJson);
+            _.forEach(_class.trialList, function (trialJson) {
+                _class.removeAttributes(trialJson);
                 const nctId = trialJson['nct_id'];
-                if (this.fileType === 'json') {
+                if (_class.fileType === 'json') {
                     content = JSON.stringify(trialJson, null, 2);
                 } else {
                     content = YAML.safeDump(trialJson);
                 }
                 // create a folder and a file
-                zipFolder.file(nctId + '.' + this.fileType, content);
+                zipFolder.file(nctId + '.' + _class.fileType, content);
             }, this);
         } else {
             _.forEach(idList, function (nctId) {
-                _.forEach(this.trialList, function (trialJson) {
+                _.forEach(_class.trialList, function (trialJson) {
                     if (nctId === trialJson['nct_id']) {
-                        this.removeAttributes(trialJson);
-                        if (this.fileType === 'json') {
+                        _class.removeAttributes(trialJson);
+                        if (_class.fileType === 'json') {
                             content = JSON.stringify(trialJson, null, 2);
                         } else {
                             content = YAML.safeDump(trialJson);
                         }
                         // create a folder and a file
-                        zipFolder.file(nctId + '.' + this.fileType, content);
+                        zipFolder.file(nctId + '.' + _class.fileType, content);
                     }
                 }, this);
             }, this);
